@@ -1,0 +1,14 @@
+# including this file to your ~/.gitconfig:
+# git config --global include.path /path/to/this/file
+[alias]
+    changed-files = !sh -c 'git log --format="" --stat --name-only $1.. | sort |uniq' -
+    commit-files = !sh -c 'git log --format="" -n 1 --stat --name-only $1' -
+    show-upstream = rev-parse --abbrev-ref --symbolic-full-name @{u}
+    up = "!sh -c 'git fetch -t && git rebase --autostash || ( echo \"Aborting rebase...\"; git rebase --abort ; exit 1)' -"
+    merge-use-ours = merge -s recursive -X ours
+    merge-use-theirs = merge -s recursive -X theirs
+    ours    = "!f() { git checkout --ours $@ && git add $@; }; f"
+    theirs  = "!f() { git checkout --theirs $@ && git add $@; }; f"
+    gg = grep --heading -C 5
+    st = status
+    co = checkout
