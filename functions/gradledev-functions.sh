@@ -11,9 +11,14 @@ function gradledev_changed_check_targets {
 }
 
 function gradledev_run_checks {
-	CHECKTARGETS="qC $(gradledev_changed_check_targets)"
-	echo "Running ./gradlew $CHECKTARGETS in `pwd`"
-	./gradlew $CHECKTARGETS
+	CHECKTARGETS="$(gradledev_changed_check_targets)"
+	if [[ "$1" != "--noqc" ]]; then
+		CHECKTARGETS="qC $CHECKTARGETS"
+	else
+		shift
+	fi
+	echo "Running ./gradlew $CHECKTARGETS $@ in `pwd`"
+	./gradlew $CHECKTARGETS "$@"
 }
 
 function gradledev_setup_local_clone {
@@ -76,7 +81,7 @@ function gradledev_run_checks_in_clone {
 	(
 	gradledev_cd_local_clone
 	gradledev_update_local_clone 1
-	gradledev_run_checks
+	gradledev_run_checks "$@"
 	)
 }
 
@@ -85,7 +90,7 @@ function gradledev_run_checks_continuously_in_clone {
 	gradledev_cd_local_clone
 	while [ 1 ]; do
 		echo "Checking for local changes"
-		gradledev_update_local_clone 1 && git fetch origin && gradledev_run_checks
+		gradledev_update_local_clone 1 && git fetch origin && gradledev_run_checks "$@"
 		echo "Waiting 10 seconds..."
 		sleep 10
 	done
