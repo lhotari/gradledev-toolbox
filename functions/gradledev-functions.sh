@@ -37,7 +37,7 @@ function gradledev_setup_local_clone {
 	git remote add $ORIGINNAME "$ORIGINURL"
 	git fetch local
 	git fetch $ORIGINNAME
-	git branch --set-upstream-to=$UPSTREAM
+	git branch --set-upstream-to $UPSTREAM
 	git config receive.denyCurrentBranch ignore
 	git config gc.auto 0
 	echo "Clone created in `pwd`"
