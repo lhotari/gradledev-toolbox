@@ -1,7 +1,7 @@
 # shell functions for gradle core development
 # zsh and bash are supported
 
-if [ -n "$GRADLEDEV_TOOLBOX_DIR" ]; then
+if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
     if [ -n "$BASH_SOURCE" ];then
         GRADLEDEV_TOOLBOX_DIR=$(dirname $BASH_SOURCE)	
     else
