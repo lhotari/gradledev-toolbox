@@ -65,11 +65,10 @@ function gradledev_setup_local_clone {
 }
 
 function gradledev_cd_local_clone {
-	GITDIR=$(git rev-parse --show-toplevel)
-	[ ! -d "$GITDIR" ] && echo "Not a git directory" && exit 1
+	gradledev_cd_gradle_dir
 	CURRENTBRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD)
-	REPONAME=$(basename $GITDIR)
-	parentdir=$(dirname $GITDIR)
+	REPONAME=$(basename $PWD)
+	parentdir=$(dirname $PWD)
 	CLONEDIR="$parentdir/$REPONAME.testclone"
 	[ ! -d "$CLONEDIR" ] && gradledev_setup_local_clone
 	cd $CLONEDIR
@@ -112,18 +111,22 @@ function gradledev_run_checks_continuously_in_clone {
 	)
 }
 
-function gradledev_perf_test {
-	(
-	GITDIR=$(git rev-parse --show-toplevel)
-	[ ! -d "$GITDIR" ] && echo "Not a git directory" && exit 1
-	cd "$GITDIR"
-	./gradlew --stop
-	TESTPARAM=""
-	if [ -n "$1" ]; then
-		TESTPARAM="-D:performance:performanceTest.single=$1"
-		shift
+function gradledev_cd_gradle_dir {
+	if [ -n "$GRADLEDEV_DIR" ]; then
+		cd "$GRADLEDEV_DIR"
+	else
+		GITDIR=$(git rev-parse --show-toplevel)
+		[ ! -d "$GITDIR" ] && echo "Not a git directory" && return 1
+		cd $GITDIR
 	fi
-	./gradlew -S -x :performance:prepareSamples :performance:performanceTest -PperformanceTest.verbose $TESTPARAM "$@"
-	)
 }
 
+function gradledev_install {
+	(
+	unset GRADLE_OPTS
+	gradledev_cd_gradle_dir
+	./gradlew -Pgradle_installPath=/tmp/gradle-install install "$@"
+	git rev-parse HEAD > /tmp/gradle-install/.githash
+	git rev-parse HEAD | colrm 8 > /tmp/gradle-install/.githash_short
+	)
+}

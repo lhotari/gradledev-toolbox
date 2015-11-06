@@ -1,3 +1,18 @@
+function gradledev_perf_test {
+	(
+	GITDIR=$(git rev-parse --show-toplevel)
+	[ ! -d "$GITDIR" ] && echo "Not a git directory" && exit 1
+	cd "$GITDIR"
+	./gradlew --stop
+	TESTPARAM=""
+	if [ -n "$1" ]; then
+		TESTPARAM="-D:performance:performanceTest.single=$1"
+		shift
+	fi
+	./gradlew -S -x :performance:prepareSamples :performance:performanceTest -PperformanceTest.verbose $TESTPARAM "$@"
+	)
+}
+
 function gradledev_daemon_pid {
     pgrep -f GradleDaemon
 }
@@ -21,3 +36,4 @@ function gradledev_jfr_stop {
         echo "command to open: jmc -open '$FILENAME'"
     fi
 }
+
