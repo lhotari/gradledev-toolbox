@@ -6,7 +6,7 @@ function gradledev_changed_modules {
 
 function gradledev_changed_check_targets {
 	for i in `gradledev_changed_modules |grep -v docs`; do 
-		echo ":${i}:check"
+		echo -n ":${i}:check "
 	done
 }
 
@@ -68,7 +68,9 @@ function gradledev_update_local_clone {
 	git fetch local
 	git diff --quiet $CURRENTBRANCH local/$CURRENTBRANCH
 	if [ $? -eq 1 ]; then
+		UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
 		git checkout -B $CURRENTBRANCH local/$CURRENTBRANCH
+		git branch --set-upstream-to $UPSTREAM
 		exit 0
 	else
 		echo "No changes."
@@ -80,7 +82,7 @@ function gradledev_update_local_clone {
 function gradledev_run_checks_in_clone {
 	(
 	gradledev_cd_local_clone
-	gradledev_update_local_clone 1
+	gradledev_update_local_clone 1 && git fetch origin
 	gradledev_run_checks "$@"
 	)
 }
