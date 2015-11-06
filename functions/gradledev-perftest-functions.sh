@@ -39,6 +39,39 @@ function gradledev_perfbuild_run {
     )
 }
 
+function gradledev_timestamp {
+	date +%Y-%m-%d-%H:%M:%S
+}
+
+function gradledev_benchmark {
+    (
+    gradledev_check_cpu || exit 1
+    if [ "$#" -eq 0 ]; then
+      params=( "build" )
+    else
+      params=( "$@" )
+    fi
+    gradledev_daemon_kill
+    gradledev_rename_caches
+    gradledev_perfbuild_run "${params[@]}"
+    TIMESLOG=times$(gradledev_timestamp).log
+    echo "Git hash $(cat /tmp/gradle-install/.githash_short)" >> $TIMESLOG
+    gradledev_perfbuild_printTimes | tee -a $TIMESLOG    
+    params = ( "${params[@]}" --parallel --max-workers=4 )
+    for ((i=1;i<=5;i+=1)); do
+        echo "This round"
+        gradledev_perfbuild_run "${params[@]}"
+        gradledev_perfbuild_printTimes | tee -a $TIMESLOG
+        echo "All times"
+        cat $TIMESLOG
+        if [[ $i != 5 ]]; then
+            echo "Wait 5 seconds"
+            sleep 5
+        fi
+    done
+    )
+}
+
 function gradledev_perfbuild_printTimes {
     (
     [ -z "$ZSH_VERSION" ] || setopt ksharrays
