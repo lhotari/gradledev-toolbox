@@ -1,0 +1,3 @@
+[submodule "jfr-report-tool"]
+	path = jfr-report-tool
+	url = https://github.com/lhotari/jfr-report-tool
