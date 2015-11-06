@@ -47,11 +47,18 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler
-    while getopts ":l:" opt; do
+    local OPTIND opt loophandler jfrenabled loopcount
+    loopcount=5
+    while getopts ":jl:c:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
+            ;;
+            j)
+            jfrenabled=1
+            ;;
+            c)
+            loopcount=$OPTARG
             ;;
         esac
     done
@@ -70,7 +77,10 @@ function gradledev_benchmark {
     echo "Git hash $(cat /tmp/gradle-install/.githash_short)" > $TIMESLOG
     gradledev_perfbuild_printTimes | tee -a $TIMESLOG    
     params=("${params[@]}" --parallel --max-workers=4)
-    for ((i=1;i<=5;i+=1)); do
+    if [[ $jfrenabled -eq 1 ]]; then
+        gradledev_jfr_start
+    fi
+    for ((i=1;i<=$loopcount;i+=1)); do
         if [[ $i > 1 ]]; then
             echo "Wait 5 seconds"
             sleep 5
@@ -84,6 +94,9 @@ function gradledev_benchmark {
         echo "All times"
         cat $TIMESLOG
     done
+    if [[ $jfrenabled -eq 1 ]]; then
+        gradledev_jfr_stop
+    fi
     )
 }
 
