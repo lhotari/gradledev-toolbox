@@ -1,3 +1,24 @@
+function jfr-report-tool {
+    $GRADLEDEV_TOOLBOX_DIR/jfr-report-tool/jfr-report-tool "$@"
+}
+
+function gradledev_open {
+    if ! type xdg-open > /dev/null; then
+        # assume MacOSX
+        open "$@"
+    else
+        # Linux
+        xdg-open "$@"
+    fi
+}
+
+function gradledev_create_flamegraph {
+    JFRFILE="$1"
+    jfr-report-tool -c '(execution.DefaultBuildExecuter.execute|progress.DefaultBuildOperationExecutor.run|execution.DefaultBuildConfigurationActionExecuter.select)' --min-samples-frame-depth=5 -m 5 "$JFRFILE"
+    convert -size 1000x1000 -resize 1000x1000 +profile '*' "$JFRFILE.svg" "$JFRFILE.jpg"
+    gradledev_open "$JFRFILE.svg"
+}
+
 function gradledev_perf_test {
     (
     GITDIR=$(git rev-parse --show-toplevel)
