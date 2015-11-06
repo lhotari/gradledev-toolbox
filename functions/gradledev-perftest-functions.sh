@@ -13,6 +13,18 @@ function gradledev_perf_test {
     )
 }
 
+function gradledev_perfbuild_run {
+    (
+    if [ "$#" -eq 0 ]; then
+      params=( "build" )
+    else
+      params=( "$@" )
+    fi
+    [ -d /tmp/gradle-install ] || gradledev_install
+    /tmp/gradle-install/bin/gradle -I init.gradle -u "${params[@]}"
+    )
+}
+
 function gradledev_daemon_pid {
     pgrep -f GradleDaemon
 }
