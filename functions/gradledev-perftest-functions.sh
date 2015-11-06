@@ -25,8 +25,37 @@ function gradledev_perfbuild_run {
     )
 }
 
+function gradledev_perfbuild_printTimes {
+    (
+    [ -z "$ZSH_VERSION" ] || setopt ksharrays
+    TIMES=($(cat build/buildEventTimestamps.txt))
+    FULLTIME=$(( (${TIMES[2]} - ${TIMES[0]})/1000000 ))
+    CONFTIME=$(( (${TIMES[1]} - ${TIMES[0]})/1000000 ))
+    BUILDTIME=$(( (${TIMES[2]} - ${TIMES[1]})/1000000 ))
+    GRADLETIME=${TIMES[3]}
+    BUILDMEM=$(( $(cat build/totalMemoryUsed.txt) / 1024 / 1024 ))
+    echo "full: $FULLTIME conf: $CONFTIME build: $BUILDTIME gradle: $GRADLETIME buildmem: $BUILDMEM"
+    )
+}
+
+function gradledev_installed_version {
+    [ -d /tmp/gradle-install ] || gradledev_install
+    /tmp/gradle-install/bin/gradle -v |egrep '^Gradle'|awk '{ print $2 }'
+}
+
+function gradledev_rename_caches {
+    GRADLE_VER=`gradledev_installed_version`
+    if [ ! -d .gradle/$GRADLE_VER ] && `ls .gradle/2.* 2> /dev/null` ; then
+        mv .gradle/2.* .gradle/$GRADLE_VER
+    fi
+}
+
 function gradledev_daemon_pid {
     pgrep -f GradleDaemon
+}
+
+function gradledev_daemon_kill {
+    pkill -f GradleDaemon
 }
 
 function gradle_opts_jfr {
