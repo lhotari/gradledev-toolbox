@@ -13,6 +13,20 @@ function gradledev_perf_test {
     )
 }
 
+function gradledev_check_cpu {
+    (
+    [ -e /sys/devices/system/cpu ] || exit 0
+    for i in /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor; do
+    	MODE=`cat $i`
+    	if [ "$MODE" != "performance" ]; then
+    		echo "CPU $i is not in performance mode! was ""\"$MODE\""
+    		exit 1 
+    	fi
+    done
+    exit 0
+    )    
+}
+
 function gradledev_perfbuild_run {
     (
     if [ "$#" -eq 0 ]; then
