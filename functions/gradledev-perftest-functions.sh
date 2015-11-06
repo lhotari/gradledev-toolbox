@@ -55,8 +55,8 @@ function gradledev_perfbuild_run {
     else
       params=( "$@" )
     fi
-    [ -d /tmp/gradle-install ] || gradledev_install
-    /tmp/gradle-install/bin/gradle -I init.gradle -u "${params[@]}"
+    gradledev_find_install
+    $GRADLEDEV_INSTALL_DIR/bin/gradle -I init.gradle -u "${params[@]}"
     )
 }
 
@@ -91,12 +91,17 @@ function gradledev_benchmark {
       params=( "$@" )
     fi
     
+    gradledev_find_install
     gradledev_daemon_kill
     gradledev_rename_caches
     gradledev_perfbuild_run "${params[@]}"
     TIMESLOG="times$(gradledev_timestamp).log"
-    echo "Git hash $(cat /tmp/gradle-install/.githash_short)" > $TIMESLOG
-    gradledev_perfbuild_printTimes | tee -a $TIMESLOG    
+    if [ -f $GRADLEDEV_INSTALL_DIR/.githash_short ]; then
+        echo "Git hash $(cat $GRADLEDEV_INSTALL_DIR/.githash_short)" > $TIMESLOG
+    else
+        echo "Gradle version $(gradledev_installed_version)" > $TIMESLOG
+    fi
+    gradledev_perfbuild_printTimes | tee -a $TIMESLOG
     params=("${params[@]}" --parallel --max-workers=4)
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_start
@@ -143,8 +148,8 @@ function gradledev_perfbuild_printTimes {
 }
 
 function gradledev_installed_version {
-    [ -d /tmp/gradle-install ] || gradledev_install
-    /tmp/gradle-install/bin/gradle -v |egrep '^Gradle'|awk '{ print $2 }'
+    gradledev_find_install
+    $GRADLEDEV_INSTALL_DIR/bin/gradle -v |egrep '^Gradle'|awk '{ print $2 }'
 }
 
 function gradledev_rename_caches {

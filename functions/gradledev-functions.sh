@@ -121,12 +121,24 @@ function gradledev_cd_gradle_dir {
     fi
 }
 
+function gradledev_find_install {
+    gradledev_find_install_dir
+    [ -d $GRADLEDEV_INSTALL_DIR ] || gradledev_install    
+}
+
+function gradledev_find_install_dir {
+    if [ -z "$GRADLEDEV_INSTALL_DIR" ]; then
+        GRADLEDEV_INSTALL_DIR=/tmp/gradle-install
+    fi
+}
+
 function gradledev_install {
     (
     unset GRADLE_OPTS
     gradledev_cd_gradle_dir
-    ./gradlew -Pgradle_installPath=/tmp/gradle-install install "$@"
-    git rev-parse HEAD > /tmp/gradle-install/.githash
-    git rev-parse HEAD | colrm 8 > /tmp/gradle-install/.githash_short
+    gradledev_find_install_dir
+    ./gradlew -Pgradle_installPath=$GRADLEDEV_INSTALL_DIR install "$@"
+    git rev-parse HEAD > $GRADLEDEV_INSTALL_DIR/.githash
+    git rev-parse HEAD | colrm 8 > $GRADLEDEV_INSTALL_DIR/.githash_short
     )
 }
