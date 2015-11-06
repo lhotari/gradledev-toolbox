@@ -1,3 +1,16 @@
+# shell functions for gradle core development
+# zsh and bash are supported
+
+if [ -n "$GRADLEDEV_TOOLBOX_DIR" ]; then
+	if [ -n "$BASH_SOURCE" ];then
+		GRADLEDEV_TOOLBOX_DIR=$(dirname $BASH_SOURCE)	
+	else
+		# zsh
+		GRADLEDEV_TOOLBOX_DIR=${0:a:h}
+	fi
+	GRADLEDEV_TOOLBOX_DIR=$(dirname $GRADLEDEV_TOOLBOX_DIR)
+fi
+
 function gradledev_changed_modules {
 	for i in `git changed-files $(git show-upstream) | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
 		python -c "import sys,re; uncapitalize = lambda s: s[:1].lower() + s[1:] if s else ''; print uncapitalize(re.sub(r'(\w+)-?', lambda m:m.group(1).capitalize(), sys.argv[1]))" $i
