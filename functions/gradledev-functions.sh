@@ -132,6 +132,11 @@ function gradledev_find_install_dir {
     fi
 }
 
+function gradledev_use_install_dir {
+    [ -f $1/bin/gradle ] || echo "Cannot find $/bin/gradle" && return 1
+    GRADLEDEV_INSTALL_DIR=$1
+}
+
 function gradledev_install {
     (
     unset GRADLE_OPTS
