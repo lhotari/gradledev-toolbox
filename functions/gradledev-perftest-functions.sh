@@ -46,30 +46,53 @@ function gradledev_timestamp {
 function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
+    
+    local OPTIND opt loophandler
+    while getopts ":l:" opt; do
+        case "${opt}" in
+            l)
+            loophandler="${OPTARG}"
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
+    
     if [ "$#" -eq 0 ]; then
       params=( "build" )
     else
       params=( "$@" )
     fi
+    
     gradledev_daemon_kill
     gradledev_rename_caches
     gradledev_perfbuild_run "${params[@]}"
-    TIMESLOG=times$(gradledev_timestamp).log
-    echo "Git hash $(cat /tmp/gradle-install/.githash_short)" >> $TIMESLOG
+    TIMESLOG="times$(gradledev_timestamp).log"
+    echo "Git hash $(cat /tmp/gradle-install/.githash_short)" > $TIMESLOG
     gradledev_perfbuild_printTimes | tee -a $TIMESLOG    
-    params = ( "${params[@]}" --parallel --max-workers=4 )
+    params=("${params[@]}" --parallel --max-workers=4)
     for ((i=1;i<=5;i+=1)); do
-        echo "This round"
-        gradledev_perfbuild_run "${params[@]}"
-        gradledev_perfbuild_printTimes | tee -a $TIMESLOG
-        echo "All times"
-        cat $TIMESLOG
-        if [[ $i != 5 ]]; then
+        if [[ $i > 1 ]]; then
             echo "Wait 5 seconds"
             sleep 5
         fi
+        if [ -n "$loophandler" ]; then
+            eval "$loophandler"
+        fi
+        gradledev_perfbuild_run "${params[@]}"
+        echo "This round"
+        gradledev_perfbuild_printTimes | tee -a $TIMESLOG
+        echo "All times"
+        cat $TIMESLOG
     done
     )
+}
+
+function gradledev_benchmark_do_change {
+    echo "Replace this function"
+}
+
+function gradledev_benchmark_changed {
+    gradledev_benchmark -l gradledev_benchmark_do_change "$@"
 }
 
 function gradledev_perfbuild_printTimes {
