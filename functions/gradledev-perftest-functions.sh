@@ -107,6 +107,7 @@ function gradledev_benchmark {
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_start
     fi
+    local i
     for ((i=1;i<=$loopcount;i+=1)); do
         if [[ $i > 1 ]]; then
             echo "Wait 5 seconds"
