@@ -12,12 +12,14 @@ if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
 fi
 
 function gradledev_changed_modules {
+    local i
     for i in `git changed-files $(git show-upstream) | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
         python -c "import sys,re; uncapitalize = lambda s: s[:1].lower() + s[1:] if s else ''; print uncapitalize(re.sub(r'(\w+)-?', lambda m:m.group(1).capitalize(), sys.argv[1]))" $i
     done
 }
 
 function gradledev_changed_check_targets {
+    local i
     for i in `gradledev_changed_modules |grep -v docs`; do 
         echo -n ":${i}:check "
     done
