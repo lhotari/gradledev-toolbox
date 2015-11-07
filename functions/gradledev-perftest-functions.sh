@@ -97,7 +97,6 @@ function gradledev_benchmark {
     
     gradledev_find_install
     gradledev_daemon_kill
-    gradledev_rename_caches
     gradledev_perfbuild_run "${params[@]}"
     TIMESLOG="times$(gradledev_timestamp).log"
     if [ -f $GRADLEDEV_INSTALL_DIR/.githash_short ]; then
