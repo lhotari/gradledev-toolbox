@@ -28,7 +28,7 @@ function gradledev_check_conf_time {
 
 function gradledev_calc_conf_time {
     # skip first 3 values
-    avgconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }')
+    avgconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ sum += $1; n++ } END { if (n > 0) print int(sum / n); }')
     maxconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 > max) max=$1; } END { print max; }')
 }
 
