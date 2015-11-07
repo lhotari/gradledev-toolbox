@@ -23,12 +23,13 @@ function gradledev_check_perf_test {
 
 function gradledev_check_conf_time {
     gradledev_calc_conf_time
-    [ $maxconftime -lt 750 ]
+    [ $avgconftime -lt 300 ]
 }
 
 function gradledev_calc_conf_time {
-    #avgconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }')
-    maxconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +2 | awk '{ if ($1 > max) max=$1; } END { print max; }')
+    # skip first 3 values
+    avgconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; }')
+    maxconftime=$(cat $TIMESLOG |awk -F': ' '{ print $3 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 > max) max=$1; } END { print max; }')
 }
 
 function gradledev_benchmark_native_do_1_change {
