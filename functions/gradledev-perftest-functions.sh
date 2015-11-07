@@ -69,12 +69,15 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler jfrenabled loopcount
+    local OPTIND opt loophandler finishhandler jfrenabled loopcount
     loopcount=5
-    while getopts ":jl:c:" opt; do
+    while getopts ":jl:c:f:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
+            ;;
+            f)
+            finishhandler="${OPTARG}"
             ;;
             j)
             jfrenabled=1
@@ -124,6 +127,9 @@ function gradledev_benchmark {
     done
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_stop
+    fi
+    if [ -n "$finishhandler" ]; then
+        eval "$finishhandler"
     fi
     )
 }
