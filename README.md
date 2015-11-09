@@ -33,6 +33,7 @@ gradledev_benchmark
 ### Example of custom git-bisect script that checks a performance test figure
 
 https://github.com/lhotari/gradledev-toolbox/blob/master/scripts/gradledev_perf_bisect.sh
+
 Fixed rules: https://github.com/lhotari/gradledev-toolbox/blob/master/functions/native-benchmark-functions.sh#L24
 
 usage (in Gradle working directory):
