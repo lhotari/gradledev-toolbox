@@ -20,6 +20,7 @@ additional functions
 
 ### Running tests for changed sub-modules in a separate directory
 
+This creates a clone of your local gradle git repository and runs the checks for submodules that have changed compared to upstream (origin/master or origin/release).
 ```
 gradledev_run_checks_in_clone
 ```
