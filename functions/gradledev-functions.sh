@@ -83,8 +83,10 @@ function gradledev_update_local_clone {
     (
     [[ "$1" == "1" ]] || gradledev_cd_local_clone
     git fetch local
-    git diff --quiet $CURRENTBRANCH local/$CURRENTBRANCH
-    if [ $? -eq 1 ]; then
+    local update_needed=0
+    git rev-parse --verify -q $CURRENTBRANCH > /dev/null || update_needed=1
+    git diff --quiet $CURRENTBRANCH local/$CURRENTBRANCH || update_needed=1
+    if [ $update_needed -eq 1 ]; then
         local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null || true)
         UPSTREAM="${UPSTREAM:-origin/master}"
         git checkout -B $CURRENTBRANCH local/$CURRENTBRANCH
