@@ -12,8 +12,10 @@ if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
 fi
 
 function gradledev_changed_modules {
-    local i
-    for i in `git changed-files $(git show-upstream) | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
+    local i UPSTREAM
+    UPSTREAM=$(git show-upstream 2> /dev/null)
+    UPSTREAM="${UPSTREAM:-origin/master}"
+    for i in `git changed-files $UPSTREAM | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
         python -c "import sys,re; uncapitalize = lambda s: s[:1].lower() + s[1:] if s else ''; print uncapitalize(re.sub(r'(\w+)-?', lambda m:m.group(1).capitalize(), sys.argv[1]))" $i
     done
 }
@@ -26,7 +28,7 @@ function gradledev_changed_check_targets {
 }
 
 function gradledev_run_checks {
-    CHECKTARGETS="$(gradledev_changed_check_targets)"
+    local CHECKTARGETS="$(gradledev_changed_check_targets)"
     if [[ "$1" != "--noqc" ]]; then
         CHECKTARGETS="qC $CHECKTARGETS"
     else
@@ -42,7 +44,8 @@ function gradledev_setup_local_clone {
     echo "setup local clone"
     GITDIR=$(git rev-parse --show-toplevel)
     [ ! -d "$GITDIR" ] && echo "Not a git directory" && exit 1
-    UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+    local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null || true)
+    UPSTREAM="${UPSTREAM:-origin/master}"
     CURRENTBRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD)
     ORIGINNAME=$(dirname $UPSTREAM)
     ORIGINURL=$(git config --get remote.$ORIGINNAME.url)
@@ -82,7 +85,8 @@ function gradledev_update_local_clone {
     git fetch local
     git diff --quiet $CURRENTBRANCH local/$CURRENTBRANCH
     if [ $? -eq 1 ]; then
-        UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u})
+        local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null || true)
+        UPSTREAM="${UPSTREAM:-origin/master}"
         git checkout -B $CURRENTBRANCH local/$CURRENTBRANCH
         git branch --set-upstream-to $UPSTREAM
         exit 0
