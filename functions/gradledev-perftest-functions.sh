@@ -30,7 +30,7 @@ function gradledev_perf_test {
         TESTPARAM="-D:performance:performanceTest.single=$1"
         shift
     fi
-    ./gradlew -S -x :performance:prepareSamples :performance:performanceTest -PperformanceTest.verbose $TESTPARAM "$@"
+    ./gradlew -S -x :performance:prepareSamples :performance:cleanPerformanceTest :performance:performanceTest -PperformanceTest.verbose $TESTPARAM "$@"
     )
 }
 
