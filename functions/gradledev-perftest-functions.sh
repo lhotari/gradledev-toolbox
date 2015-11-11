@@ -21,9 +21,8 @@ function gradledev_create_flamegraph {
 
 function gradledev_perf_test {
     (
-    GITDIR=$(git rev-parse --show-toplevel)
-    [ ! -d "$GITDIR" ] && echo "Not a git directory" && exit 1
-    cd "$GITDIR"
+    gradledev_check_cpu || exit 1
+    gradledev_cd_gradle_dir
     ./gradlew --stop
     TESTPARAM=""
     if [ -n "$1" ]; then
@@ -51,6 +50,7 @@ function gradledev_check_cpu {
 
 function gradledev_perfbuild_run {
     (
+    local params
     if [ "$#" -eq 0 ]; then
       params=( "build" )
     else
@@ -69,7 +69,7 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler finishhandler jfrenabled loopcount
+    local OPTIND opt loophandler finishhandler jfrenabled loopcount params
     loopcount=5
     while getopts ":jl:c:f:" opt; do
         case "${opt}" in
