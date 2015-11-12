@@ -193,6 +193,12 @@ function gradle_opts_jfr {
     gradledev_set_opts $mode '-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
 }
 
+function gradle_opts_jfr_enabled {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode "-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,dumponexit=true"
+}
+
 function gradle_opts_jitwatch {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
