@@ -178,6 +178,10 @@ function gradle_opts_jfr {
     export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'"
 }
 
+function gradle_opts_jitwatch {
+    export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'"
+}
+
 function gradledev_jfr_start {
     DAEMON_PID=`gradledev_daemon_pid`
     jcmd $DAEMON_PID JFR.start name=GradleDaemon_$DAEMON_PID settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
