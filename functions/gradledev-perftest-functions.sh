@@ -182,6 +182,11 @@ function gradle_opts_jitwatch {
     export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'"
 }
 
+function gradle_opts_gclogging {
+    # %p in loggc requires java 8
+    export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'"
+}
+
 function gradledev_jfr_start {
     DAEMON_PID=`gradledev_daemon_pid`
     jcmd $DAEMON_PID JFR.start name=GradleDaemon_$DAEMON_PID settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
