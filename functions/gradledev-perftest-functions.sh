@@ -174,17 +174,36 @@ function gradledev_daemon_kill {
     pkill -f GradleDaemon
 }
 
+function gradledev_set_opts {
+    local mode=$1
+    shift
+    local options="$@"
+    if [ $mode = "nodaemon" ]; then
+        export GRADLE_OPTS="$options"
+    elif [ $mode = "both" ]; then
+        export GRADLE_OPTS="$options -Dorg.gradle.jvmargs='$options'"
+    else
+        export GRADLE_OPTS="-Dorg.gradle.jvmargs='$options'"
+    fi
+}
+
 function gradle_opts_jfr {
-    export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'"
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode '-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
 }
 
 function gradle_opts_jitwatch {
-    export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'"
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode '-Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'
 }
 
 function gradle_opts_gclogging {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
     # %p in loggc requires java 8
-    export GRADLE_OPTS="-Dorg.gradle.jvmargs='-Xmx2g -verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'"
+    gradledev_set_opts $mode '-Xmx2g -verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'
 }
 
 function gradledev_jfr_start {
