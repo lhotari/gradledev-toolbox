@@ -212,6 +212,18 @@ function gradle_opts_gclogging {
     gradledev_set_opts $mode '-Xmx2g -verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'
 }
 
+function gradle_opts_debug {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode '-Xmx2g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+}
+
+function gradle_opts_debug_suspend {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode '-Xmx2g -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
+}
+
 function gradledev_jfr_start {
     DAEMON_PID=`gradledev_daemon_pid`
     jcmd $DAEMON_PID JFR.start name=GradleDaemon_$DAEMON_PID settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
