@@ -13,10 +13,22 @@ function gradledev_open {
 }
 
 function gradledev_create_flamegraph {
+    (
+    local OPTIND OPTARG opt
+    reportargs="-c '(execution.DefaultBuildExecuter.execute|progress.DefaultBuildOperationExecutor.run|execution.DefaultBuildConfigurationActionExecuter.select)' --min-samples-frame-depth=5 -m 5"
+    while getopts ":n" opt; do
+        case "${opt}" in
+            n)
+            reportargs="-e none -m 1"
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
     JFRFILE="$1"
-    jfr-report-tool -c '(execution.DefaultBuildExecuter.execute|progress.DefaultBuildOperationExecutor.run|execution.DefaultBuildConfigurationActionExecuter.select)' --min-samples-frame-depth=5 -m 5 "$JFRFILE"
+    jfr-report-tool $reportargs "$JFRFILE"
     convert -size 1000x1000 -resize 1000x1000 +profile '*' "$JFRFILE.svg" "$JFRFILE.jpg"
     gradledev_open "$JFRFILE.svg"
+    )
 }
 
 function gradledev_perf_test {
