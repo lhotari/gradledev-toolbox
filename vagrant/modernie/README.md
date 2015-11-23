@@ -178,3 +178,24 @@ Install git support for Windows shells
 choco install -y git
 setx path "%path%;C:\Program Files\Git\bin\"
 ```
+
+## Using box for gradle development / testing
+
+
+Open powershell console over ssh
+```
+ssh -t winbox console powershell
+```
+
+Clone gradle
+```
+git clone https://github.com/gradle/gradle
+```
+
+You can now push changes from your local development environment by adding a remote:
+```
+git remote add winbox winbox:/cygdrive/c/users/IEUser/gradle/.git
+git push winbox some_branch
+```
+
+
