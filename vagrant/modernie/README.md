@@ -183,6 +183,8 @@ setx path "%path%;C:\Program Files\Git\bin\"
 
 ```
 choco install -y jdk8
+setx PATH "%PATH%;C:\Program Files\Java\jdk1.8.0_65\bin\"
+setx JAVA_HOME "C:\Program Files\Java\jdk1.8.0_65"
 ```
 
 ## Using box for gradle development / testing
