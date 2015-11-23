@@ -113,7 +113,7 @@ reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff /f
 
 ```
 choco install -y cyg-get
-cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim git
+cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim git wget curl ca-certificates
 ```
 
 Open Cygwin shell in Administrator mode and enter these commands:
@@ -155,4 +155,19 @@ ssh-copy-id -i ~/.ssh/identity_file_to_use winbox
 ```
 It's recommended to specify the identity file to use when using `ssh-copy-id` although the parameter is optional.
 
+
+### Install support for running powershell over ssh
+
+[winpty](https://github.com/rprichard/winpty) is required to run Windows terminal apps over ssh.
+
+```
+curl -L https://github.com/rprichard/winpty/releases/download/0.2.0/winpty-0.2.0-cygwin-2.3.0-ia32.tar.gz |tar zxvf -
+mv winpty-0.2.0-cygwin-2.3.0-ia32/bin/* /cygdrive/c/Windows/system32
+rm -rf winpty-0.2.0-cygwin-2.3.0-ia32
+```
+
+Now you can run powershell.exe or cmd.exe over ssh
+```
+console powershell
+```
 
