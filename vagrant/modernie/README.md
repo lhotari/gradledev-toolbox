@@ -107,3 +107,37 @@ sc config WSearch start= disabled
 REM Suppress the Network Location Wizard
 reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff /f
 ```
+
+### Install Chocolatey package manager
+
+```
+@powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))" && SET PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin
+```
+
+### Install cygwin and openssh with chocolatey
+
+```
+choco install cyg-get
+cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim
+```
+
+Open Cygwin shell in Administrator mode and enter these commands:
+```
+# generate /etc/group & /etc/passwd files
+mkgroup -l > /etc/group
+mkpasswd -l -p "$(cygpath -H)" > /etc/passwd
+
+# configure cygwin sshd
+ssh-host-config -y --cygwin "ntsecbinmode mintty nodosfilewarning" --pwd "$(makepasswd --minchars=20 --maxchars=30)"
+
+# Disable user / group permission checking
+sed -i 's/.*StrictModes.*/StrictModes no/' /etc/sshd_config
+# Disable reverse DNS lookups
+sed -i 's/.*UseDNS.*/UseDNS no/' /etc/sshd_config
+```
+
+### Install github Desktop
+
+```
+choco install github
+```
