@@ -113,7 +113,7 @@ reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff /f
 
 ```
 choco install -y cyg-get
-cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim
+cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim git
 ```
 
 Open Cygwin shell in Administrator mode and enter these commands:
@@ -129,10 +129,4 @@ ssh-host-config -y --cygwin "ntsecbinmode mintty nodosfilewarning" --pwd "$(make
 sed -i 's/.*StrictModes.*/StrictModes no/' /etc/sshd_config
 # Disable reverse DNS lookups
 sed -i 's/.*UseDNS.*/UseDNS no/' /etc/sshd_config
-```
-
-### Install github Desktop
-
-```
-choco install -y github
 ```
