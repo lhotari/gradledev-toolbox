@@ -206,4 +206,7 @@ git remote add winbox winbox:/cygdrive/c/users/IEUser/gradle/.git
 git push winbox some_branch
 ```
 
-
+You can also run gradle in cygwin bash when you use the console wrapper, for example:
+```
+console ./gradlew.bat
+```
