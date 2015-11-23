@@ -27,15 +27,10 @@ WinRM is enabled by default for the Win 8.0, Win 8.1 and Win 10 modern.ie boxes.
 
 [Run as an administrator](https://technet.microsoft.com/en-us/library/cc947813%28v=ws.10%29.aspx)  the following script:
 
-```bash
-@echo off
-set WINRM_EXEC=call %SYSTEMROOT%\System32\winrm
-%WINRM_EXEC% quickconfig -q
-%WINRM_EXEC% set winrm/config/winrs @{MaxMemoryPerShellMB="300"}
-%WINRM_EXEC% set winrm/config @{MaxTimeoutms="1800000"}
-%WINRM_EXEC% set winrm/config/client/auth @{Basic="true"}
-%WINRM_EXEC% set winrm/config/service @{AllowUnencrypted="true"}
-%WINRM_EXEC% set winrm/config/service/auth @{Basic="true"}
+```
+winrm quickconfig -q
+@powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Item WSMan:\localhost\Service\AllowUnencrypted -Value True; Set-Item WSMan:\localhost\Service\Auth\Basic -Value True"
+sc triggerinfo winrm start/networkon stop/networkoff
 ```
 
 At this time the [up command](http://docs.vagrantup.com/v2/cli/up.html) will be probably verifying if the guest booted properly. Since you just configured **WinRM**, the command should terminate successfully.

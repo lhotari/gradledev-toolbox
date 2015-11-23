@@ -21,7 +21,6 @@ Vagrant.configure("2") do |config|
 
   # winrm config, uses modern.ie default user/password. If other credentials are used must be changed here
   config.vm.communicator = "winrm"
-  config.winrm.host = "localhost"
   config.winrm.username = "IEUser"
   config.winrm.password = "Passw0rd!"
 
