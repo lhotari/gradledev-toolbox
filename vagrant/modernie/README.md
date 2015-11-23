@@ -15,11 +15,17 @@ Start box with gui enabled:
 ```
 vbgui=1 vagrant up
 ```
+When the machine is booted, continue with the following steps in the VirtualBox guest window.
 
-When the machine is booted, do the following steps on VirtualBox guest window:
+### Choose network location
 
-- Set the [network location](http://windows.microsoft.com/en-us/windows/choosing-network-location#1TC=windows-7) to *Home* or *Work*. Without this the next step **will not work**.
-- [Run as an administrator](https://technet.microsoft.com/en-us/library/cc947813%28v=ws.10%29.aspx)  the following script:
+Set the [network location](http://windows.microsoft.com/en-us/windows/choosing-network-location#1TC=windows-7) to *Home* or *Work*. Without this the next step **will not work**.
+
+### Enable WinRM 
+
+WinRM is enabled by default for the Win 8.0, Win 8.1 and Win 10 modern.ie boxes. The step is required for the Win 7 boxes.
+
+[Run as an administrator](https://technet.microsoft.com/en-us/library/cc947813%28v=ws.10%29.aspx)  the following script:
 
 ```bash
 @echo off
@@ -32,4 +38,4 @@ set WINRM_EXEC=call %SYSTEMROOT%\System32\winrm
 %WINRM_EXEC% set winrm/config/service/auth @{Basic="true"}
 ```
 
-- At this time the [up command](http://docs.vagrantup.com/v2/cli/up.html) will be probably verifying if the guest booted properly. Since you just configured **WinRM**, the command should terminate successfully.
+At this time the [up command](http://docs.vagrantup.com/v2/cli/up.html) will be probably verifying if the guest booted properly. Since you just configured **WinRM**, the command should terminate successfully.
