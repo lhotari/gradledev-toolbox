@@ -179,6 +179,12 @@ choco install -y git
 setx path "%path%;C:\Program Files\Git\bin\"
 ```
 
+### Install jdk8
+
+```
+choco install -y jdk8
+```
+
 ## Using box for gradle development / testing
 
 
