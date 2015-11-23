@@ -117,7 +117,7 @@ reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff /f
 ### Install cygwin and openssh with chocolatey
 
 ```
-choco install cyg-get
+choco install -y cyg-get
 cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim
 ```
 
@@ -139,5 +139,5 @@ sed -i 's/.*UseDNS.*/UseDNS no/' /etc/sshd_config
 ### Install github Desktop
 
 ```
-choco install github
+choco install -y github
 ```
