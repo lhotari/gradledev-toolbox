@@ -170,3 +170,11 @@ Now you can run powershell.exe or cmd.exe over ssh
 ```
 ssh -t winbox console powershell
 ```
+
+### Install git
+
+Install git support for Windows shells
+```
+choco install -y git
+setx path "%path%;C:\Program Files\Git\bin\"
+```
