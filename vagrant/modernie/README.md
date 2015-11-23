@@ -1,4 +1,4 @@
-# Windows boxes for testing
+# Windows box for testing
 
 Based on instructions from https://gist.github.com/andreptb/57e388df5e881937e62a .
 
@@ -129,4 +129,30 @@ ssh-host-config -y --cygwin "ntsecbinmode mintty nodosfilewarning" --pwd "$(make
 sed -i 's/.*StrictModes.*/StrictModes no/' /etc/sshd_config
 # Disable reverse DNS lookups
 sed -i 's/.*UseDNS.*/UseDNS no/' /etc/sshd_config
+
+# start ssh
+net start sshd
 ```
+
+### Add ssh config
+
+Local port 55522 is forwarded to ssh port on VM.
+
+Adding a config to `~/.ssh/config` makes it easier to connect to the box:
+```bash
+cat >> ~/.ssh/config <<EOF
+
+Host winbox
+  HostName 127.0.0.1
+  Port 55522
+  User IEUser
+EOF
+```
+
+Use `ssh-copy-id` to set up ssh key authentication.
+```
+ssh-copy-id -i ~/.ssh/identity_file_to_use winbox
+```
+It's recommended to specify the identity file to use when using `ssh-copy-id` although the parameter is optional.
+
+
