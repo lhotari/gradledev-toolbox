@@ -168,6 +168,5 @@ rm -rf winpty-0.2.0-cygwin-2.3.0-ia32
 
 Now you can run powershell.exe or cmd.exe over ssh
 ```
-console powershell
+ssh -t winbox console powershell
 ```
-
