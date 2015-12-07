@@ -82,15 +82,14 @@ function gradledev_cd_local_clone {
 function gradledev_update_local_clone {
     (
     [[ "$1" == "1" ]] || gradledev_cd_local_clone
+    local UPSTREAM="$2"
     git fetch local
     local update_needed=0
     git rev-parse --verify -q $CURRENTBRANCH > /dev/null || update_needed=1
     git diff --quiet $CURRENTBRANCH local/$CURRENTBRANCH || update_needed=1
     if [ $update_needed -eq 1 ]; then
-        local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null || true)
-        UPSTREAM="${UPSTREAM:-origin/master}"
         git checkout -B $CURRENTBRANCH local/$CURRENTBRANCH
-        git branch --set-upstream-to $UPSTREAM
+        [ -z "$UPSTREAM" ] || git branch --set-upstream-to $UPSTREAM
         exit 0
     else
         echo "No changes."
@@ -101,18 +100,20 @@ function gradledev_update_local_clone {
 
 function gradledev_run_checks_in_clone {
     (
+    local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
     gradledev_cd_local_clone
-    gradledev_update_local_clone 1 && git fetch origin
+    gradledev_update_local_clone 1 "$UPSTREAM" && git fetch origin
     gradledev_run_checks "$@"
     )
 }
 
 function gradledev_run_checks_continuously_in_clone {
     (
+    local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
     gradledev_cd_local_clone
     while [ 1 ]; do
         echo "Checking for local changes"
-        gradledev_update_local_clone 1 && git fetch origin && gradledev_run_checks "$@"
+        gradledev_update_local_clone 1 "$UPSTREAM" && git fetch origin && gradledev_run_checks "$@"
         echo "Waiting 10 seconds..."
         sleep 10
     done
