@@ -116,6 +116,7 @@ function gradledev_benchmark {
     else
         echo "Gradle version $(gradledev_installed_version)" > $TIMESLOG
     fi
+    declare -p GRADLE_OPTS >> $TIMESLOG
     gradledev_perfbuild_printTimes | tee -a $TIMESLOG
     params=("${params[@]}" --parallel --max-workers=4)
     if [[ $jfrenabled -eq 1 ]]; then
