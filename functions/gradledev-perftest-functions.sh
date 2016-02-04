@@ -189,6 +189,14 @@ function gradledev_daemon_kill {
     for pid in `gradledev_daemon_pid`; do
         kill $pid
     done
+    if [ -n "$(gradledev_daemon_pid)" ]; then
+        echo "Killing remaining GradleDaemon processes. Waiting 2 seconds."
+        sleep 2
+        for pid in `gradledev_daemon_pid`; do
+            echo "Killing $pid"
+            kill -9 $pid
+        done
+    fi
 }
 
 function gradledev_set_opts {
