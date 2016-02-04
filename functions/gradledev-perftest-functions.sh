@@ -181,11 +181,14 @@ function gradledev_rename_caches {
 }
 
 function gradledev_daemon_pid {
-    pgrep -f GradleDaemon
+    jps | grep GradleDaemon | awk '{ print $1 }'
 }
 
 function gradledev_daemon_kill {
-    pkill -f GradleDaemon
+    local pid
+    for pid in `gradledev_daemon_pid`; do
+        kill $pid
+    done
 }
 
 function gradledev_set_opts {
