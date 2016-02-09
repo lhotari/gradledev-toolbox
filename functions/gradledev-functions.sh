@@ -28,14 +28,24 @@ function gradledev_changed_check_targets {
 }
 
 function gradledev_run_checks {
+    (
+    local OPTIND OPTARG OPTERR opt
     local CHECKTARGETS="$(gradledev_changed_check_targets)"
-    if [[ "$1" != "--noqc" ]]; then
-        CHECKTARGETS="qC $CHECKTARGETS"
-    else
-        shift
-    fi
+    while getopts "-:" opt; do
+        # long argument parsing, see http://stackoverflow.com/a/7680682
+        case "${opt}" in
+            -)
+                case "${OPTARG}" in
+                    qc)
+                        CHECKTARGETS="qC $CHECKTARGETS"
+                        ;;
+                esac;;
+        esac
+    done
+    shift $((OPTIND-1))    
     echo "Running ./gradlew $CHECKTARGETS $@ in `pwd`"
     ./gradlew $CHECKTARGETS "$@"
+    )
 }
 
 function gradledev_setup_local_clone {
