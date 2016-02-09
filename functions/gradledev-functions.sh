@@ -21,10 +21,15 @@ function gradledev_changed_modules {
 }
 
 function gradledev_changed_check_targets {
+    (
     local i
     for i in `gradledev_changed_modules |grep -v docs`; do 
         echo -n ":${i}:check "
+        if [[ "$1" == "noit" ]]; then
+            echo -n "-x :${i}:integTest "
+        fi
     done
+    )
 }
 
 function gradledev_run_checks {
@@ -38,6 +43,9 @@ function gradledev_run_checks {
                 case "${OPTARG}" in
                     qc)
                         CHECKTARGETS="qC $CHECKTARGETS"
+                        ;;
+                    noit)
+                        CHECKTARGETS="$(gradledev_changed_check_targets noit)"
                         ;;
                 esac;;
         esac
