@@ -136,6 +136,7 @@ function gradledev_benchmark {
         gradledev_perfbuild_printTimes | tee -a $TIMESLOG
         echo "All times"
         cat $TIMESLOG
+        gradledev_perfbuid_printMinTime
     done
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_stop
@@ -164,6 +165,16 @@ function gradledev_perfbuild_printTimes {
     GRADLETIME=${TIMES[3]}
     BUILDMEM=$(( $(cat build/totalMemoryUsed.txt) / 1024 / 1024 ))
     echo "full: $FULLTIME conf: $CONFTIME build: $BUILDTIME gradle: $GRADLETIME buildmem: $BUILDMEM"
+    )
+}
+
+function gradledev_perfbuid_printMinTime {
+    (
+    mintime=$(cat $TIMESLOG |awk -F': ' '{ print $5 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 < min || min == 0) min=$1; } END { print min; }')
+    if [ -n "$mintime" ]; then
+       echo "Minimum time:"
+       cat $TIMESLOG|grep "gradle: $mintime"
+    fi
     )
 }
 
