@@ -136,7 +136,8 @@ function gradledev_benchmark {
         gradledev_perfbuild_printTimes | tee -a $TIMESLOG
         echo "All times"
         cat $TIMESLOG
-        gradledev_perfbuid_printMinTime
+        echo "Min times"
+        gradledev_perfbuild_printMinTimes
     done
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_stop
@@ -168,12 +169,25 @@ function gradledev_perfbuild_printTimes {
     )
 }
 
-function gradledev_perfbuid_printMinTime {
+function gradledev_perfbuild_printMinTimes {
     (
-    mintime=$(cat $TIMESLOG |awk -F': ' '{ print $5 }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 < min || min == 0) min=$1; } END { print min; }')
+    if [ -n "$1" ]; then
+        TIMESLOG="$1"
+    fi
+    gradledev_perfbuild_printMinTime full 2
+    gradledev_perfbuild_printMinTime conf 3
+    gradledev_perfbuild_printMinTime build 4
+    gradledev_perfbuild_printMinTime gradle 5
+    )
+}
+
+function gradledev_perfbuild_printMinTime {
+    (
+    fname=${1:-gradle}
+    fnum=${2:-5}
+    mintime=$(cat $TIMESLOG |awk -v fnum=$fnum -F': ' '{ print $fnum }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 < min || min == 0) min=$1; } END { print min; }')
     if [ -n "$mintime" ]; then
-       echo "Minimum time:"
-       cat $TIMESLOG|grep "gradle: $mintime"
+       cat $TIMESLOG|grep "$fname: $mintime"
     fi
     )
 }
