@@ -187,7 +187,7 @@ function gradledev_perfbuild_printMinTime {
     fnum=${2:-5}
     mintime=$(cat $TIMESLOG |awk -v fnum=$fnum -F': ' '{ print $fnum }'|awk '{ print $1 }' | awk 'NF' | tail -n +4 | awk '{ if ($1 < min || min == 0) min=$1; } END { print min; }')
     if [ -n "$mintime" ]; then
-       cat $TIMESLOG|grep "$fname: $mintime"
+       cat $TIMESLOG|grep --color "$fname: $mintime"
     fi
     )
 }
