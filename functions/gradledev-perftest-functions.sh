@@ -81,9 +81,10 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler finishhandler jfrenabled loopcount params
+    local OPTIND opt loophandler finishhandler jfrenabled loopcount params loopdelay
     loopcount=5
-    while getopts ":jl:c:f:" opt; do
+    loopdelay=5
+    while getopts ":jl:c:f:d:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -96,6 +97,9 @@ function gradledev_benchmark {
             ;;
             c)
             loopcount=$OPTARG
+            ;;
+            d)
+            loopdelay=$OPTARG
             ;;
         esac
     done
@@ -124,9 +128,9 @@ function gradledev_benchmark {
     fi
     local i
     for ((i=1;i<=$loopcount;i+=1)); do
-        if [[ $i > 1 ]]; then
-            echo "Wait 5 seconds"
-            sleep 5
+        if [[ $i > 1 && $loopdelay > 0 ]]; then
+            echo "Wait $loopdelay seconds"
+            sleep $loopdelay
         fi
         if [ -n "$loophandler" ]; then
             eval "$loophandler"
