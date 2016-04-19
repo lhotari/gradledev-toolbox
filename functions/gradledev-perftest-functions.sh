@@ -274,6 +274,24 @@ function gradle_opts_debug_suspend {
     gradledev_set_opts $mode '-Xmx2g -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
 }
 
+function gradle_opts_honestprofiler {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    HP_HOME_DIR=${HONEST_PROFILER_HOME:-$HOME/tools/honest-profiler}
+    HP_LOGFILE="$PWD/honest_profiler_$(gradledev_timestamp).hpl"
+    echo "Using log file ${HP_LOGFILE}"
+    export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64"
+    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+}
+
+function gradledev_honestprofiler_gui {
+    if [ -z "$HP_HOME_DIR" ]; then
+        HP_HOME_DIR=${HONEST_PROFILER_HOME:-$HOME/tools/honest-profiler}
+    fi
+    cd "$HP_HOME_DIR"
+    ./gui "$HP_LOGFILE"
+}
+
 function gradledev_jfr_start {
     DAEMON_PID=`gradledev_daemon_pid`
     jcmd $DAEMON_PID JFR.start name=GradleDaemon_$DAEMON_PID settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
