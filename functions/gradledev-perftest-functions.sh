@@ -69,7 +69,9 @@ function gradledev_perfbuild_run {
       params=( "$@" )
     fi
     gradledev_find_install
-    $GRADLEDEV_INSTALL_DIR/bin/gradle -I init.gradle -u "${params[@]}"
+    local init_part
+    [ -f init.gradle ] && init_part=" -I init.gradle"
+    $GRADLEDEV_INSTALL_DIR/bin/gradle$init_part -u "${params[@]}"
     )
 }
 
@@ -162,14 +164,16 @@ function gradledev_benchmark_changed {
 
 function gradledev_perfbuild_printTimes {
     (
-    [ -z "$ZSH_VERSION" ] || setopt ksharrays
-    TIMES=($(cat build/buildEventTimestamps.txt))
-    FULLTIME=$(( (${TIMES[2]} - ${TIMES[0]})/1000000 ))
-    CONFTIME=$(( (${TIMES[1]} - ${TIMES[0]})/1000000 ))
-    BUILDTIME=$(( (${TIMES[2]} - ${TIMES[1]})/1000000 ))
-    GRADLETIME=${TIMES[3]}
-    BUILDMEM=$(( $(cat build/totalMemoryUsed.txt) / 1024 / 1024 ))
-    echo "full: $FULLTIME conf: $CONFTIME build: $BUILDTIME gradle: $GRADLETIME buildmem: $BUILDMEM"
+    if [ -f build/buildEventTimestamps.txt ]; then
+        [ -z "$ZSH_VERSION" ] || setopt ksharrays
+        TIMES=($(cat build/buildEventTimestamps.txt))
+        FULLTIME=$(( (${TIMES[2]} - ${TIMES[0]})/1000000 ))
+        CONFTIME=$(( (${TIMES[1]} - ${TIMES[0]})/1000000 ))
+        BUILDTIME=$(( (${TIMES[2]} - ${TIMES[1]})/1000000 ))
+        GRADLETIME=${TIMES[3]}
+        BUILDMEM=$(( $(cat build/totalMemoryUsed.txt) / 1024 / 1024 ))
+        echo "full: $FULLTIME conf: $CONFTIME build: $BUILDTIME gradle: $GRADLETIME buildmem: $BUILDMEM"
+    fi
     )
 }
 
