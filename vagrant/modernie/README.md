@@ -119,6 +119,8 @@ reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff /f
 choco install -y cyg-get
 cyg-get openssh rsync ncurses makepasswd nano cygrunsrv vim git wget curl ca-certificates
 ```
+If cyg-get fails, download https://cygwin.com/setup-x86.exe and rename and move it to C:\tools\cygwin\cygwinsetup.exe
+
 
 Open Cygwin shell in Administrator mode and enter these commands:
 ```
