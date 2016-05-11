@@ -225,3 +225,8 @@ You can also run gradle in cygwin bash when you use the console wrapper, for exa
 ```
 console ./gradlew.bat
 ```
+
+
+## audio
+
+[Realtek AC97 driver](http://www.realtek.com.tw/downloads/downloadsView.aspx?Langid=1&PNid=23&PFid=23&Level=4&Conn=3&DownTypeID=3&GetDown=false)
