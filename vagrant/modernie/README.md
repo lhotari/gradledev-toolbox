@@ -185,7 +185,7 @@ ssh -t winbox console powershell
 Install git support for Windows shells
 ```
 choco install -y git
-setx path "%path%;C:\Program Files\Git\bin\"
+setx PATH "%PATH%;C:\Program Files\Git\bin\"
 ```
 
 ### Install jdk8
