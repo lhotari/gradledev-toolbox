@@ -76,14 +76,8 @@ REM Disable UAC
 REM Disable Windows Firewall
 netsh advfirewall set allprofiles state off
 
-REM Disable Windows Update
+REM Disable Windows Auto Update
 %SystemRoot%\System32\reg.exe add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update" /v AUOptions /t REG_DWORD /d 1 /f
-
-REM Stop Windows Update Service
-net stop wuauserv
-
-REM Disable Windows Update Service
-sc config wuauserv start= disabled
 
 REM Use platform clock for time keeping
 bcdedit /set {default} useplatformclock true
