@@ -69,6 +69,10 @@ REM Enable Remote Desktop
 REM Disable Application Compatibility
 %SystemRoot%\System32\reg.exe ADD "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags" /v {de21dff1-3ea2-4465-98dd-0ad4d23b15fd} /t REG_DWORD /d 4 /f
 
+REM Disable UAC
+%SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
+%SystemRoot%\System32\reg.exe ADD "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 0 /f
+
 REM Disable Windows Firewall
 netsh advfirewall set allprofiles state off
 
