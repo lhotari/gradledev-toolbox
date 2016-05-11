@@ -176,9 +176,9 @@ It's recommended to specify the identity file to use when using `ssh-copy-id` al
 [winpty](https://github.com/rprichard/winpty) is required to run Windows terminal apps over ssh.
 
 ```
-curl -L https://github.com/rprichard/winpty/releases/download/0.2.0/winpty-0.2.0-cygwin-2.3.0-ia32.tar.gz |tar zxvf -
-mv winpty-0.2.0-cygwin-2.3.0-ia32/bin/* /cygdrive/c/Windows/system32
-rm -rf winpty-0.2.0-cygwin-2.3.0-ia32
+curl -L https://github.com/rprichard/winpty/releases/download/0.2.2/winpty-0.2.2-cygwin-2.4.1-ia32.tar.gz |tar zxvf -
+mv winpty-0.2.2-cygwin-2.4.1-ia32/bin/* /cygdrive/c/Windows/system32
+rm -rf winpty-0.2.2-cygwin-2.4.1-ia32
 ```
 
 Now you can run powershell.exe or cmd.exe over ssh
