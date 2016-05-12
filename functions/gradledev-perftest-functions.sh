@@ -83,10 +83,10 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler finishhandler jfrenabled loopcount params loopdelay
+    local OPTIND opt loophandler finishhandler jfrenabled loopcount params loopdelay nokill
     loopcount=5
     loopdelay=5
-    while getopts ":jl:c:f:d:" opt; do
+    while getopts ":jnl:c:f:d:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -96,6 +96,9 @@ function gradledev_benchmark {
             ;;
             j)
             jfrenabled=1
+            ;;
+            n)
+            nokill=1
             ;;
             c)
             loopcount=$OPTARG
@@ -114,7 +117,9 @@ function gradledev_benchmark {
     fi
     
     gradledev_find_install
-    gradledev_daemon_kill
+    if [[ $nokill -ne 1 ]]; then
+        gradledev_daemon_kill
+    fi
     gradledev_perfbuild_run "${params[@]}"
     TIMESLOG="times$(gradledev_timestamp).log"
     if [ -f $GRADLEDEV_INSTALL_DIR/.githash_short ]; then
