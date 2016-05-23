@@ -12,20 +12,25 @@ if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
 fi
 
 function gradledev_changed_modules {
-    local i UPSTREAM
-    UPSTREAM=$(git show-upstream 2> /dev/null)
+    (
+    local i
+    local UPSTREAM="$1"
+    if [ -z "$UPSTREAM" ]; then
+        UPSTREAM=$(git show-upstream 2> /dev/null)
+    fi
     UPSTREAM="${UPSTREAM:-origin/master}"
     for i in `git changed-files $UPSTREAM | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
         python -c "import sys,re; uncapitalize = lambda s: s[:1].lower() + s[1:] if s else ''; print uncapitalize(re.sub(r'(\w+)-?', lambda m:m.group(1).capitalize(), sys.argv[1]))" $i
     done
+    )
 }
 
 function gradledev_changed_check_targets {
     (
     local i
-    for i in `gradledev_changed_modules |grep -v docs`; do 
+    for i in `gradledev_changed_modules "$1" |grep -v docs`; do 
         echo -n ":${i}:check "
-        if [[ "$1" == "noit" ]]; then
+        if [[ "$2" == "noit" ]]; then
             echo -n "-x :${i}:integTest "
         fi
     done
@@ -35,7 +40,7 @@ function gradledev_changed_check_targets {
 function gradledev_run_checks {
     (
     local OPTIND OPTARG OPTERR opt
-    local CHECKTARGETS="$(gradledev_changed_check_targets)"
+    local CHECKTARGETS="$(gradledev_changed_check_targets $1)"
     while getopts "-:" opt; do
         # long argument parsing, see http://stackoverflow.com/a/7680682
         case "${opt}" in
@@ -45,12 +50,15 @@ function gradledev_run_checks {
                         CHECKTARGETS="qC $CHECKTARGETS"
                         ;;
                     noit)
-                        CHECKTARGETS="$(gradledev_changed_check_targets noit)"
+                        CHECKTARGETS="$(gradledev_changed_check_targets $1 noit)"
                         ;;
                 esac;;
         esac
     done
-    shift $((OPTIND-1))    
+    shift $((OPTIND-1))
+    if [ "$#" -gt 0 ]; then
+        shift
+    fi
     echo "Running ./gradlew $CHECKTARGETS $@ in `pwd`"
     ./gradlew $CHECKTARGETS "$@"
     )
@@ -118,20 +126,30 @@ function gradledev_update_local_clone {
 
 function gradledev_run_checks_in_clone {
     (
-    local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
+    local UPSTREAM="$1"
+    if [ -z "$UPSTREAM" ]; then
+        UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
+    else
+        shift
+    fi
     gradledev_cd_local_clone
     gradledev_update_local_clone 1 "$UPSTREAM" && git fetch origin
-    gradledev_run_checks "$@"
+    gradledev_run_checks $UPSTREAM "$@"
     )
 }
 
 function gradledev_run_checks_continuously_in_clone {
     (
-    local UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
+    local UPSTREAM="$1"
+    if [ -z "$UPSTREAM" ]; then
+        UPSTREAM=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2> /dev/null)
+    else
+        shift
+    fi
     gradledev_cd_local_clone
     while [ 1 ]; do
         echo "Checking for local changes"
-        gradledev_update_local_clone 1 "$UPSTREAM" && git fetch origin && gradledev_run_checks "$@"
+        gradledev_update_local_clone 1 "$UPSTREAM" && git fetch origin && gradledev_run_checks $UPSTREAM "$@"
         echo "Waiting 10 seconds..."
         sleep 10
     done
