@@ -39,23 +39,23 @@ function gradledev_changed_check_targets {
 
 function gradledev_run_checks {
     (
-    local OPTIND OPTARG OPTERR opt
-    local CHECKTARGETS="$(gradledev_changed_check_targets $1)"
+    local OPTIND OPTARG OPTERR opt additionalargs additionaltargets
     while getopts "-:" opt; do
         # long argument parsing, see http://stackoverflow.com/a/7680682
         case "${opt}" in
             -)
                 case "${OPTARG}" in
                     qc)
-                        CHECKTARGETS="qC $CHECKTARGETS"
+                        additionaltargets="$additionaltargets qC"
                         ;;
                     noit)
-                        CHECKTARGETS="$(gradledev_changed_check_targets $1 noit)"
+                        additionalargs="$additionalargs noit"
                         ;;
                 esac;;
         esac
     done
     shift $((OPTIND-1))
+    local CHECKTARGETS="$additionaltargets $(gradledev_changed_check_targets "$1" $additionalargs)"
     if [ "$#" -gt 0 ]; then
         shift
     fi
