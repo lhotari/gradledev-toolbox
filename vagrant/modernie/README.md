@@ -196,6 +196,12 @@ setx PATH "%PATH%;C:\Program Files\Java\jdk1.8.0_92\bin"
 setx JAVA_HOME "C:\Program Files\Java\jdk1.8.0_92"
 ```
 
+### Install sysinternals
+
+```
+choco install -y sysinternals
+```
+
 ### Audio driver (optional)
 
 If you happen to need to use some Windows software that needs audio (Skype for Business, etc.), this driver works for VirtualBox:
