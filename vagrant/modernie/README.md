@@ -196,6 +196,13 @@ setx PATH "%PATH%;C:\Program Files\Java\jdk1.8.0_92\bin"
 setx JAVA_HOME "C:\Program Files\Java\jdk1.8.0_92"
 ```
 
+### Audio driver (optional)
+
+If you happen to need to use some Windows software that needs audio (Skype for Business, etc.), this driver works for VirtualBox:
+
+[Realtek AC97 driver](http://www.realtek.com.tw/downloads/downloadsView.aspx?Langid=1&PNid=23&PFid=23&Level=4&Conn=3&DownTypeID=3&GetDown=false)
+
+
 ## Using box for gradle development / testing
 
 
@@ -238,6 +245,3 @@ console ./gradlew.bat
 ```
 
 
-## audio
-
-[Realtek AC97 driver](http://www.realtek.com.tw/downloads/downloadsView.aspx?Langid=1&PNid=23&PFid=23&Level=4&Conn=3&DownTypeID=3&GetDown=false)
