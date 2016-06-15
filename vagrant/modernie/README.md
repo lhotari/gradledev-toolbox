@@ -254,4 +254,8 @@ git reset --hard HEAD
 gradlew -S -Porg.gradle.integtest.verbose :integTest:integTest --tests *BuildScriptClasspathIntegrationSpec
 ```
 
-
+example of copying test reports to hosts and viewing them in a browser
+```
+rsync -av winbox:gradle/subprojects/integ-test/build/reports/integTest .rsync -av winbox:gradle/subprojects/integ-test/build/reports/integTest .
+open integTest/index.html
+```
