@@ -251,7 +251,7 @@ ssh winbox
 cd gradle
 console cmd
 git reset --hard HEAD
-gradlew -S -Porg.gradle.integtest.verbose integTest:integTest *BuildScriptClasspathIntegrationSpec
+gradlew -S -Porg.gradle.integtest.verbose :integTest:integTest --tests *BuildScriptClasspathIntegrationSpec
 ```
 
 
