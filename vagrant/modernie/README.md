@@ -245,9 +245,13 @@ After re-pushing, just reset to the HEAD
 git reset --hard HEAD
 ```
 
-You can also run gradle in cygwin bash when you use the console wrapper, for example:
+Example of running a single test in winbox within windows cmd.exe shell
 ```
-console ./gradlew.bat
+ssh winbox
+cd gradle
+console cmd
+git reset --hard HEAD
+gradlew -S -Porg.gradle.integtest.verbose integTest:integTest *BuildScriptClasspathIntegrationSpec
 ```
 
 
