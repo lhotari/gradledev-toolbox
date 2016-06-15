@@ -251,7 +251,7 @@ ssh winbox
 cd gradle
 console cmd
 git reset --hard HEAD
-gradlew -S -Porg.gradle.integtest.verbose :integTest:integTest --tests *BuildScriptClasspathIntegrationSpec
+gradlew -S -Porg.gradle.integtest.verbose -PtimestampedVersion :integTest:integTest --tests *BuildScriptClasspathIntegrationSpec
 ```
 
 example of copying test reports to hosts and viewing them in a browser
@@ -259,3 +259,22 @@ example of copying test reports to hosts and viewing them in a browser
 rsync -av winbox:gradle/subprojects/integ-test/build/reports/integTest .rsync -av winbox:gradle/subprojects/integ-test/build/reports/integTest .
 open integTest/index.html
 ```
+
+Example command for running performance test:
+
+create performance test project once:
+```
+gradlew :performance:largeWithJUnit
+```
+
+re-run multiple times:
+```
+gradlew -S -Porg.gradle.performance.heapdump -PtimestampedVersion -x :performance:prepareSamples :performance:cleanPerformanceTest :performance:performanceTest -PperformanceTest.verbose -D:performance:performanceTest.single=JavaTestExecutionPerformanceTest
+```
+
+Copy heapdumps:
+```
+rsync -av winbox:"gradle/subprojects/performance/build/tmp/*.hprof" .
+```
+
+
