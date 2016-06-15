@@ -204,6 +204,11 @@ Open powershell console over ssh
 ssh -t winbox console powershell
 ```
 
+or traditional cmd.exe console over ssh
+```
+ssh -t winbox console cmd
+```
+
 Clone gradle
 ```
 git clone https://github.com/gradle/gradle
@@ -213,6 +218,18 @@ You can now push changes from your local development environment by adding a rem
 ```
 git remote add winbox winbox:/cygdrive/c/users/IEUser/gradle/.git
 git push winbox some_branch
+```
+
+Checkout the branch in the winbox and allow pushing to checked out branch:
+```
+cd gradle
+git checkout some_branch
+git config receive.denyCurrentBranch ignore
+```
+
+After re-pushing, just reset to the HEAD
+```
+git reset --hard HEAD
 ```
 
 You can also run gradle in cygwin bash when you use the console wrapper, for example:
