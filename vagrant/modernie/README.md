@@ -126,7 +126,7 @@ mkgroup -l > /etc/group
 mkpasswd -l -p "$(cygpath -H)" > /etc/passwd
 
 # configure cygwin sshd
-ssh-host-config -y --cygwin "ntsecbinmode mintty nodosfilewarning" --pwd "$(makepasswd --minchars=20 --maxchars=30)"
+ssh-host-config -y --cygwin "nodosfilewarning" --pwd "$(makepasswd --minchars=20 --maxchars=30)"
 
 # Disable user / group permission checking
 sed -i 's/.*StrictModes.*/StrictModes no/' /etc/sshd_config
