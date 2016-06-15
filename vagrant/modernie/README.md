@@ -4,10 +4,8 @@ Based on instructions from https://gist.github.com/andreptb/57e388df5e881937e62a
 
 ## Requirements
 
-* Vagrant
-* VirtualBox
-* winrm gem installed - `sudo gem install winrm`
-
+* [Vagrant](https://www.vagrantup.com/downloads.html)
+* [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 ## First boot manual setup
 
@@ -168,11 +166,13 @@ It's recommended to specify the identity file to use when using `ssh-copy-id` al
 ### Install support for running powershell over ssh
 
 [winpty](https://github.com/rprichard/winpty) is required to run Windows terminal apps over ssh.
+Download the latest ia32 variant from https://github.com/rprichard/winpty/releases/latest .
 
+example of installing winpty:
 ```
-curl -L https://github.com/rprichard/winpty/releases/download/0.2.2/winpty-0.2.2-cygwin-2.4.1-ia32.tar.gz |tar zxvf -
-mv winpty-0.2.2-cygwin-2.4.1-ia32/bin/* /cygdrive/c/Windows/system32
-rm -rf winpty-0.2.2-cygwin-2.4.1-ia32
+curl -L https://github.com/rprichard/winpty/releases/download/0.3.1/winpty-0.3.1-cygwin-2.5.1-ia32.tar.gz |tar zxvf -
+mv winpty-*/bin/* /cygdrive/c/Windows/system32
+rm -rf winpty-*
 ```
 
 Now you can run powershell.exe or cmd.exe over ssh
