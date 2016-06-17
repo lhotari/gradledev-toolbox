@@ -177,7 +177,7 @@ rm -rf winpty-*
 
 Now you can run powershell.exe or cmd.exe over ssh
 ```
-ssh -t winbox console powershell
+ssh -t winbox winpty powershell
 ```
 
 ### Install git
@@ -214,12 +214,12 @@ If you happen to need to use some Windows software that needs audio (Skype for B
 
 Open powershell console over ssh
 ```
-ssh -t winbox console powershell
+ssh -t winbox winpty powershell
 ```
 
 or traditional cmd.exe console over ssh
 ```
-ssh -t winbox console cmd
+ssh -t winbox winpty cmd
 ```
 
 Clone gradle
@@ -249,7 +249,7 @@ Example of running a single test in winbox within windows cmd.exe shell
 ```
 ssh winbox
 cd gradle
-console cmd
+winpty cmd
 git reset --hard HEAD
 gradlew -S -Porg.gradle.integtest.verbose -PtimestampedVersion :integTest:integTest --tests *BuildScriptClasspathIntegrationSpec
 ```
