@@ -7,6 +7,7 @@ TESTNAME=${1:-IdeIntegrationPerformanceTest}
 TESTPROJECT=${2:-multi}
 ./gradlew clean
 [ -d ~/.gradle-bisect-override ] && cp -Rdvp ~/.gradle-bisect-override/* .
+[ -x ~/.gradle-bisect-override-script ] && ~/.gradle-bisect-override-script $TESTNAME $TESTPROJECT
 ./gradlew -S -PtimestampedVersion -x :performance:prepareSamples :performance:$TESTPROJECT :performance:cleanPerformanceTest :performance:performanceTest -D:performance:performanceTest.single=$TESTNAME
 result=$?
 hash=$(git rev-parse HEAD | colrm 9)
