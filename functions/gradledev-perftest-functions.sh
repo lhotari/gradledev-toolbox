@@ -294,7 +294,7 @@ function gradle_opts_honestprofiler {
     HP_LOGFILE="$PWD/honest_profiler_$(gradledev_timestamp).hpl"
     echo "Using log file ${HP_LOGFILE}"
     export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64"
-    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,maxFrames=512,logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
 }
 
 function gradledev_honestprofiler_gui {
