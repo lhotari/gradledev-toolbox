@@ -300,11 +300,15 @@ function gradle_opts_honestprofiler {
     local mode=daemon
     local OPTIND OPTARG opt
     local hp_extra_properties=""
-    while getopts ":c" opt; do
+    local hp_interval=7
+    while getopts ":ci:" opt; do
         case "${opt}" in
             c)
             HP_PORT=${HONEST_PROFILER_PORT:-18080}
             hp_extra_properties=",port=$HP_PORT,host=127.0.0.1,start=0"
+            ;;
+            i)
+            hp_interval="${OPTARG}"
             ;;
         esac
     done
@@ -314,7 +318,7 @@ function gradle_opts_honestprofiler {
     HP_LOGFILE="$PWD/honest_profiler_$(gradledev_timestamp).hpl"
     echo "Using log file ${HP_LOGFILE}"
     export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64"
-    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,maxFrames=1024${hp_extra_properties},logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=${hp_interval},maxFrames=1024${hp_extra_properties},logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
 }
 
 function gradledev_hp_start {
