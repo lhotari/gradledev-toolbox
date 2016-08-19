@@ -338,7 +338,8 @@ function gradledev_honestprofiler_flamegraph {
         HP_HOME_DIR=${HONEST_PROFILER_HOME:-$HOME/tools/honest-profiler}
     fi
     java -cp $JAVA_HOME/lib/tools.jar:$HP_HOME_DIR/honest-profiler.jar com.insightfullogic.honest_profiler.ports.console.FlameGraphDumperApplication "$HP_LOGFILE" "${HP_LOGFILE}.flames"
-    $GRADLEDEV_TOOLBOX_DIR/jfr-report-tool/flamegraph.pl "${HP_LOGFILE}.flames" > "${HP_LOGFILE}.svg"
+    cat "${HP_LOGFILE}.flames" | grep -v ^AGCT\\. > "${HP_LOGFILE}.flames.filtered"
+    $GRADLEDEV_TOOLBOX_DIR/jfr-report-tool/flamegraph.pl "${HP_LOGFILE}.flames.filtered" > "${HP_LOGFILE}.svg"
     convert -size 1000x1000 -resize 1000x1000 +profile '*' "${HP_LOGFILE}.svg" "${HP_LOGFILE}.jpg"
     gradledev_open "${HP_LOGFILE}.svg"
     )
