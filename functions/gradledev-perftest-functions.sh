@@ -83,10 +83,10 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler finishhandler jfrenabled loopcount params loopdelay nokill
+    local OPTIND opt loophandler finishhandler jfrenabled hpenabled loopcount params loopdelay nokill
     loopcount=5
     loopdelay=5
-    while getopts ":jnl:c:f:d:" opt; do
+    while getopts ":jhnl:c:f:d:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -96,6 +96,9 @@ function gradledev_benchmark {
             ;;
             j)
             jfrenabled=1
+            ;;
+            h)
+            hpenabled=1
             ;;
             n)
             nokill=1
@@ -133,6 +136,9 @@ function gradledev_benchmark {
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_start
     fi
+    if [[ $hpenabled -eq 1 ]]; then
+        gradledev_hp_start
+    fi
     local i
     for ((i=1;i<=$loopcount;i+=1)); do
         if [[ $i > 1 && $loopdelay > 0 ]]; then
@@ -152,6 +158,9 @@ function gradledev_benchmark {
     done
     if [[ $jfrenabled -eq 1 ]]; then
         gradledev_jfr_stop
+    fi
+    if [[ $hpenabled -eq 1 ]]; then
+        gradledev_hp_stop
     fi
     if [ -n "$finishhandler" ]; then
         eval "$finishhandler"
@@ -289,12 +298,31 @@ function gradle_opts_debug_suspend {
 
 function gradle_opts_honestprofiler {
     local mode=daemon
+    local OPTIND OPTARG opt
+    local hp_extra_properties=""
+    while getopts ":c" opt; do
+        case "${opt}" in
+            c)
+            HP_PORT=${HONEST_PROFILER_PORT:-18080}
+            hp_extra_properties=",port=$HP_PORT,host=127.0.0.1,start=0"
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
     [ $# -lt 1 ] || mode=$1
     HP_HOME_DIR=${HONEST_PROFILER_HOME:-$HOME/tools/honest-profiler}
     HP_LOGFILE="$PWD/honest_profiler_$(gradledev_timestamp).hpl"
     echo "Using log file ${HP_LOGFILE}"
     export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64"
-    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,maxFrames=1024,logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=7,maxFrames=1024${hp_extra_properties},logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+}
+
+function gradledev_hp_start {
+    echo start | nc 127.0.0.1 ${HP_PORT:-18080}
+}
+
+function gradledev_hp_stop {
+    echo stop | nc 127.0.0.1 ${HP_PORT:-18080}
 }
 
 function gradledev_honestprofiler_gui {
