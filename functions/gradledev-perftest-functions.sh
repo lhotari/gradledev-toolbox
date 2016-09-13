@@ -260,6 +260,12 @@ function gradledev_set_opts {
     fi
 }
 
+function gradle_opts_default {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    gradledev_set_opts $mode
+}
+
 function gradle_opts_jfr {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
