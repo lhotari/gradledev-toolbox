@@ -249,7 +249,8 @@ function gradledev_daemon_kill {
 function gradledev_set_opts {
     local mode=$1
     shift
-    local options="$@"
+    local mem_options=${GRADLEDEV_OPTS:--Xmx2g}
+    local options="$mem_options $@"
     if [ $mode = "nodaemon" ]; then
         export GRADLE_OPTS="$options"
     elif [ $mode = "both" ]; then
@@ -262,38 +263,38 @@ function gradledev_set_opts {
 function gradle_opts_jfr {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode '-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=stackdepth=1024 -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
+    gradledev_set_opts $mode 'XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=stackdepth=1024 -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
 }
 
 function gradle_opts_jfr_enabled {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode "-Xmx2g -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,stackdepth=1024,dumponexit=true"
+    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,stackdepth=1024,dumponexit=true"
 }
 
 function gradle_opts_jitwatch {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode '-Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'
+    gradledev_set_opts $mode 'XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'
 }
 
 function gradle_opts_gclogging {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
     # %p in loggc requires java 8
-    gradledev_set_opts $mode '-Xmx2g -verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'
+    gradledev_set_opts $mode 'verbose:gc -Xloggc:gc_%p.log -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintAdaptiveSizePolicy'
 }
 
 function gradle_opts_debug {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode '-Xmx2g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
+    gradledev_set_opts $mode 'agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'
 }
 
 function gradle_opts_debug_suspend {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode '-Xmx2g -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
+    gradledev_set_opts $mode 'agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005'
 }
 
 function gradle_opts_honestprofiler {
@@ -318,7 +319,7 @@ function gradle_opts_honestprofiler {
     HP_LOGFILE="$PWD/honest_profiler_$(gradledev_timestamp).hpl"
     echo "Using log file ${HP_LOGFILE}"
     export LD_LIBRARY_PATH="$JAVA_HOME/jre/lib/amd64"
-    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=${hp_interval},maxFrames=1024${hp_extra_properties},logPath=${HP_LOGFILE} -Xmx2g -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
+    gradledev_set_opts $mode "-agentpath:${HP_HOME_DIR}/liblagent.so=interval=${hp_interval},maxFrames=1024${hp_extra_properties},logPath=${HP_LOGFILE} -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints"
 }
 
 function gradledev_hp_start {
