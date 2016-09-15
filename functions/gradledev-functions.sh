@@ -192,3 +192,11 @@ function gradledev_install {
     git rev-parse HEAD | colrm 8 > $GRADLEDEV_INSTALL_DIR/.githash_short
     )
 }
+
+function gradle_cleanup_caches {
+    (
+    rm -rf ~/.gradle/caches/{1.*,2.*,3.*,4.*}
+    rm -rf ~/.gradle/daemon
+    rm -rf ~/.gradle/wrapper/dists/*-201*
+    )
+}
