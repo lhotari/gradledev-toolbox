@@ -195,6 +195,7 @@ function gradledev_install {
 
 function gradle_cleanup_caches {
     (
+    [ -z "$ZSH_VERSION" ] || unsetopt nomatch
     rm -rf ~/.gradle/caches/{1.*,2.*,3.*,4.*}
     rm -rf ~/.gradle/daemon
     rm -rf ~/.gradle/wrapper/dists/*-201*
