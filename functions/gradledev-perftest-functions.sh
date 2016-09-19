@@ -83,10 +83,10 @@ function gradledev_benchmark {
     (
     gradledev_check_cpu || exit 1
     
-    local OPTIND opt loophandler finishhandler jfrenabled hpenabled loopcount params loopdelay nokill
+    local OPTIND opt loophandler finishhandler jfrenabled yjpenabled hpenabled loopcount params loopdelay nokill
     loopcount=5
     loopdelay=5
-    while getopts ":jhnl:c:f:d:" opt; do
+    while getopts ":jyhnl:c:f:d:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -96,6 +96,9 @@ function gradledev_benchmark {
             ;;
             j)
             jfrenabled=1
+            ;;
+            y)
+            yjpenabled=1
             ;;
             h)
             hpenabled=1
@@ -139,6 +142,9 @@ function gradledev_benchmark {
     if [[ $hpenabled -eq 1 ]]; then
         gradledev_hp_start
     fi
+    if [[ $yjpenabled -eq 1 ]]; then
+        gradledev_yjp_start_sampling
+    fi
     local i
     for ((i=1;i<=$loopcount;i+=1)); do
         if [[ $i > 1 && $loopdelay > 0 ]]; then
@@ -161,6 +167,9 @@ function gradledev_benchmark {
     fi
     if [[ $hpenabled -eq 1 ]]; then
         gradledev_hp_stop
+    fi
+    if [[ $yjpenabled -eq 1 ]]; then
+        gradledev_yjp_snapshot
     fi
     if [ -n "$finishhandler" ]; then
         eval "$finishhandler"
