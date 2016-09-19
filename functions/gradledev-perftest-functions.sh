@@ -272,6 +272,25 @@ function gradle_opts_jfr {
     gradledev_set_opts $mode 'XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=stackdepth=1024 -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
 }
 
+function gradle_opts_yjp {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    local agent_file=linux-x86-64/libyjpagent.so
+    if [[ "$(uname)" == "Darwin" ]]; then
+        agent_file=mac/libyjpagent.jnilib
+    fi 
+    local yjp_agent="${YJP_HOME:-/opt/yjp}/bin/${agent_file}"
+    local yjp_mode=${2:-sampling}
+    local yjp_common_params="disablealloc,monitors,probe_disable=*,delay=0,onexit=snapshot"
+    local yjp_params="sampling,disabletracing"
+    if [[ "$yjp_mode" == "tracing" ]]; then
+        yjp_params="tracing"
+    elif [[ "$yjp_mode" == "call_counting" ]]; then
+        yjp_params="call_counting"
+    fi
+    gradledev_set_opts $mode "-agentpath:${yjp_agent}=${yjp_params},${yjp_common_params}"
+}
+
 function gradle_opts_jfr_enabled {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
