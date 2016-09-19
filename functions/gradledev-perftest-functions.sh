@@ -281,7 +281,7 @@ function gradle_opts_yjp {
     fi 
     local yjp_agent="${YJP_HOME:-/opt/yjp}/bin/${agent_file}"
     local yjp_mode=${2:-sampling}
-    local yjp_common_params="disablealloc,monitors,probe_disable=*,delay=0,onexit=snapshot"
+    local yjp_common_params="disablealloc,monitors,probe_disable=*,delay=0,onexit=snapshot,port=10010,onlylocal"
     local yjp_params="sampling,disabletracing"
     if [[ "$yjp_mode" == "tracing" ]]; then
         yjp_params="tracing"
@@ -289,6 +289,18 @@ function gradle_opts_yjp {
         yjp_params="call_counting"
     fi
     gradledev_set_opts $mode "-agentpath:${yjp_agent}=${yjp_params},${yjp_common_params}"
+}
+
+function gradle_opts_yjp_enable {
+    local mode=daemon
+    [ $# -lt 1 ] || mode=$1
+    local agent_file=linux-x86-64/libyjpagent.so
+    if [[ "$(uname)" == "Darwin" ]]; then
+        agent_file=mac/libyjpagent.jnilib
+    fi 
+    local yjp_agent="${YJP_HOME:-/opt/yjp}/bin/${agent_file}"
+    local yjp_params="disableall,port=10010,onlylocal"
+    gradledev_set_opts $mode "-agentpath:${yjp_agent}=${yjp_params}"
 }
 
 function gradle_opts_jfr_enabled {
@@ -393,3 +405,21 @@ function gradledev_jfr_stop {
     fi
 }
 
+yjp_cli_jar="${YJP_HOME:-/opt/yjp}/lib/yjp-controller-api-redist.jar"
+yjp_cli="java -jar $yjp_cli_jar localhost 10010"
+
+function gradledev_yjp_clear {
+    $yjp_cli clear-cpu-data
+    $yjp_cli clear-alloc-data
+    $yjp_cli clear-monitor-data
+}
+
+function gradledev_yjp_start_sampling {
+    $yjp_cli start-cpu-sampling
+    $yjp_cli start-monitor-profiling
+    $yjp_cli enable-stack-telemetry
+}
+
+function gradledev_yjp_snapshot {
+    $yjp_cli capture-performance-snapshot
+}
