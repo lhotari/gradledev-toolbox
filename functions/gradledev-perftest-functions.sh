@@ -86,7 +86,8 @@ function gradledev_benchmark {
     local OPTIND opt loophandler finishhandler jfrenabled yjpenabled hpenabled loopcount params loopdelay nokill
     loopcount=5
     loopdelay=5
-    while getopts ":jyhnl:c:f:d:" opt; do
+    warmupcount=1
+    while getopts ":jyhnl:c:f:d:w:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -112,6 +113,9 @@ function gradledev_benchmark {
             d)
             loopdelay=$OPTARG
             ;;
+            w)
+            warmupcount=$OPTARG
+            ;;
         esac
     done
     shift $((OPTIND-1))
@@ -126,7 +130,13 @@ function gradledev_benchmark {
     if [[ $nokill -ne 1 ]]; then
         gradledev_daemon_kill
     fi
-    gradledev_perfbuild_run "${params[@]}"
+    for ((i=1;i<=$warmupcount;i+=1)); do
+        echo "Warmup $i/$warmupcount"
+        gradledev_perfbuild_run "${params[@]}"
+    done
+    if [ $warmupcount -eq 0 ]; then
+        gradledev_perfbuild_run help
+    fi
     TIMESLOG="times$(gradledev_timestamp).log"
     if [ -f $GRADLEDEV_INSTALL_DIR/.githash_short ]; then
         echo "Git hash $(cat $GRADLEDEV_INSTALL_DIR/.githash_short)" > $TIMESLOG
@@ -147,6 +157,7 @@ function gradledev_benchmark {
     fi
     local i
     for ((i=1;i<=$loopcount;i+=1)); do
+        echo "Execution $i/$loopcount"
         if [[ $i > 1 && $loopdelay > 0 ]]; then
             echo "Wait $loopdelay seconds"
             sleep $loopdelay
