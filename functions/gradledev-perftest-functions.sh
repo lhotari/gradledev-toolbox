@@ -181,6 +181,7 @@ function gradledev_benchmark {
     fi
     if [[ -n "$yjpenabled" ]]; then
         gradledev_yjp_snapshot
+        gradledev_yjp_stop_profiling
     fi
     if [ -n "$finishhandler" ]; then
         eval "$finishhandler"
@@ -460,4 +461,10 @@ function gradledev_yjp_start_profiling {
 
 function gradledev_yjp_snapshot {
     $yjp_cli capture-performance-snapshot
+}
+
+function gradledev_yjp_stop_profiling {
+    $yjp_cli stop-cpu-profiling
+    $yjp_cli stop-alloc-recording
+    $yjp_cli stop-monitor-profiling
 }
