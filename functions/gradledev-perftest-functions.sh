@@ -87,7 +87,7 @@ function gradledev_benchmark {
     loopcount=5
     loopdelay=5
     warmupcount=1
-    while getopts ":jyhnl:c:f:d:w:" opt; do
+    while getopts ":jhnl:c:f:d:w:y:" opt; do
         case "${opt}" in
             l)
             loophandler="${OPTARG}"
@@ -99,7 +99,7 @@ function gradledev_benchmark {
             jfrenabled=1
             ;;
             y)
-            yjpenabled=1
+            yjpenabled="${OPTARG}"
             ;;
             h)
             hpenabled=1
@@ -152,8 +152,8 @@ function gradledev_benchmark {
     if [[ $hpenabled -eq 1 ]]; then
         gradledev_hp_start
     fi
-    if [[ $yjpenabled -eq 1 ]]; then
-        gradledev_yjp_start_sampling
+    if [[ -n "$yjpenabled" ]]; then
+        gradledev_yjp_start_profiling "$yjpenabled"
     fi
     local i
     for ((i=1;i<=$loopcount;i+=1)); do
@@ -179,7 +179,7 @@ function gradledev_benchmark {
     if [[ $hpenabled -eq 1 ]]; then
         gradledev_hp_stop
     fi
-    if [[ $yjpenabled -eq 1 ]]; then
+    if [[ -n "$yjpenabled" ]]; then
         gradledev_yjp_snapshot
     fi
     if [ -n "$finishhandler" ]; then
@@ -434,10 +434,28 @@ function gradledev_yjp_clear {
     $yjp_cli clear-monitor-data
 }
 
-function gradledev_yjp_start_sampling {
-    $yjp_cli start-cpu-sampling
-    $yjp_cli start-monitor-profiling
-    $yjp_cli enable-stack-telemetry
+function gradledev_yjp_start_profiling {
+    local yjp_method=sampling
+    [ $# -lt 1 ] || yjp_method=$1
+    case "${yjp_method}" in
+        sampling)
+        $yjp_cli start-cpu-sampling
+        $yjp_cli start-monitor-profiling
+        $yjp_cli enable-stack-telemetry
+        ;;
+        call_counting)
+        $yjp_cli start-cpu-call-counting
+        ;;
+        tracing)
+        $yjp_cli start-cpu-tracing
+        ;;
+        alloc_recording|alloc_recording_adaptive)
+        $yjp_cli start-alloc-recording-adaptive
+        ;;
+        alloc_recording_all)
+        $yjp_cli start-alloc-recording-all
+        ;;
+    esac
 }
 
 function gradledev_yjp_snapshot {
