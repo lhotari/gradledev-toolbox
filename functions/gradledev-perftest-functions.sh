@@ -242,7 +242,7 @@ function gradledev_installed_version {
 
 function gradledev_rename_caches {
     GRADLE_VER=`gradledev_installed_version 2> /dev/null`
-    GRADLE_CACHE_DIR=`ls -trd1 .gradle/2.* 2> /dev/null`
+    GRADLE_CACHE_DIR=`ls -trd1 .gradle/3.* 2> /dev/null`
     if [[ -n "$GRADLE_VER" && ! -d ".gradle/$GRADLE_VER" && -d "$GRADLE_CACHE_DIR" ]]; then
         mv "$GRADLE_CACHE_DIR" ".gradle/$GRADLE_VER"
     fi
