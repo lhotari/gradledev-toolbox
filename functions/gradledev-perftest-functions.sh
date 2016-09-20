@@ -319,7 +319,7 @@ function gradle_opts_yjp_enable {
         agent_file=mac/libyjpagent.jnilib
     fi 
     local yjp_agent="${YJP_HOME:-/opt/yjp}/bin/${agent_file}"
-    local yjp_params="disableall,port=10010,onlylocal"
+    local yjp_params="port=10010,onlylocal"
     gradledev_set_opts $mode "-agentpath:${yjp_agent}=${yjp_params}"
 }
 
