@@ -207,3 +207,11 @@ function javadev_gather_jstacks {
     $GRADLEDEV_TOOLBOX_DIR/scripts/gather_jstacks.sh "$@"
     )
 }
+
+function gradledev_jstacks {
+    javadev_gather_jstacks `jps -l |grep -i gradle|awk '{ print $1 }'`
+}
+
+function gradledev_jstacks_workers {
+    javadev_gather_jstacks `jps -l |grep GradleWorkerMain|awk '{ print $1 }'`
+}
