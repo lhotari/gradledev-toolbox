@@ -201,3 +201,9 @@ function gradle_cleanup_caches {
     rm -rf ~/.gradle/wrapper/dists/*-201*
     )
 }
+
+function javadev_gather_jstacks {
+    (
+    $GRADLEDEV_TOOLBOX_DIR/scripts/gather_jstacks.sh "$@"
+    )
+}
