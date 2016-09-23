@@ -215,3 +215,9 @@ function gradledev_jstacks {
 function gradledev_jstacks_workers {
     javadev_gather_jstacks `jps -l |grep GradleWorkerMain|awk '{ print $1 }'`
 }
+
+function idea {
+    local params="$@"
+    [ $# -gt 0 ] || params=$(ls *.ipr)
+    /opt/idea-IC/bin/idea.sh $params &
+}
