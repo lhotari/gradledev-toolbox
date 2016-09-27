@@ -328,16 +328,19 @@ function gradle_opts_jfr_enabled {
     local mode=daemon
     local OPTIND OPTARG opt
     local jfr_extra_properties=""
-    while getopts "d:" opt; do
+    while getopts ":bd:" opt; do
         case "${opt}" in
             d)
-            jfr_extra_properties=",dumponexitpath=${OPTARG}"
+            jfr_extra_properties="${jfr_extra_properties},dumponexitpath=${OPTARG}"
+            ;;
+            b)
+            jfr_extra_properties="${jfr_extra_properties},globalbuffersize=500M,maxchunksize=120M,threadbuffersize=200k"
             ;;
         esac
     done
     shift $((OPTIND-1))
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,stackdepth=1024,dumponexit=true${jfr_extra_properties}"
+    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,stackdepth=1024,disk=true,dumponexit=true${jfr_extra_properties}"
 }
 
 function gradle_opts_jitwatch {
