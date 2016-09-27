@@ -327,8 +327,10 @@ function gradle_opts_yjp_enable {
 function gradle_opts_jfr_enabled {
     local mode=daemon
     local OPTIND OPTARG opt
+    local jfr_basic_properties=",defaultrecording=true"
     local jfr_extra_properties=""
-    while getopts ":bd:" opt; do
+    local jfr_extra_options=""
+    while getopts ":bsd:" opt; do
         case "${opt}" in
             d)
             jfr_extra_properties="${jfr_extra_properties},dumponexitpath=${OPTARG}"
@@ -336,11 +338,15 @@ function gradle_opts_jfr_enabled {
             b)
             jfr_extra_properties="${jfr_extra_properties},globalbuffersize=500M,maxchunksize=120M,threadbuffersize=200k"
             ;;
+            s)
+            jfr_basic_properties=""
+            jfr_extra_options="-XX:StartFlightRecording=settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,name=GradleProfiling"
+            ;;
         esac
     done
     shift $((OPTIND-1))
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,stackdepth=1024,disk=true,dumponexit=true${jfr_extra_properties}"
+    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=stackdepth=1024,disk=true,dumponexit=true${jfr_basic_properties}${jfr_extra_properties} ${jfr_extra_options}"
 }
 
 function gradle_opts_jitwatch {
