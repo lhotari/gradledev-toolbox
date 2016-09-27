@@ -326,8 +326,18 @@ function gradle_opts_yjp_enable {
 
 function gradle_opts_jfr_enabled {
     local mode=daemon
+    local OPTIND OPTARG opt
+    local jfr_extra_properties=""
+    while getopts "d:" opt; do
+        case "${opt}" in
+            d)
+            jfr_extra_properties=",dumponexitpath=${OPTARG}"
+            ;;
+        esac
+    done
+    shift $((OPTIND-1))
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,stackdepth=1024,dumponexit=true"
+    gradledev_set_opts $mode "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints -XX:FlightRecorderOptions=defaultrecording=true,settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc,disk=true,maxsize=500M,stackdepth=1024,dumponexit=true${jfr_extra_properties}"
 }
 
 function gradle_opts_jitwatch {
