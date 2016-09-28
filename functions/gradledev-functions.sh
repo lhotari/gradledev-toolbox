@@ -218,6 +218,6 @@ function gradledev_jstacks_workers {
 
 function idea {
     local params="$@"
-    [ $# -gt 0 ] || params=$(ls *.ipr)
+    [ $# -gt 0 ] || params="$PWD"
     /opt/idea-IC/bin/idea.sh $params &
 }
