@@ -12,3 +12,4 @@
     gg = grep --heading -C 5
     st = status
     co = checkout
+    checkpoint = !sh -c 'TAGNAME=`git rev-parse --abbrev-ref --symbolic-full-name HEAD`-`date +%F-%T|sed s/://g` && echo "tagging with $TAGNAME" && git tag $TAGNAME' -
