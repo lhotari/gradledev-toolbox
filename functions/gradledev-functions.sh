@@ -193,6 +193,25 @@ function gradledev_install {
     )
 }
 
+function gradledev_installed_version {
+    gradledev_find_install
+    $GRADLEDEV_INSTALL_DIR/bin/gradle -v |egrep '^Gradle'|awk '{ print $2 }'
+}
+
+function gradledev_install_wrapper {
+    (
+    gradledev_install
+    gradledev_find_install_dir
+    $GRADLEDEV_INSTALL_DIR/bin/gradle wrapper
+    GRADLE_VER=`gradledev_installed_version 2> /dev/null`
+    if [[ -n "$GRADLE_VER" ]]; then
+        cp -Rdvp $GRADLEDEV_INSTALL_DIR/. ~/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*/gradle-${GRADLE_VER}
+        touch ~/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*/gradle-${GRADLE_VER}-bin.zip.ok
+    fi
+    ./gradlew --version
+    )
+}
+
 function gradle_cleanup_caches {
     (
     [ -z "$ZSH_VERSION" ] || unsetopt nomatch

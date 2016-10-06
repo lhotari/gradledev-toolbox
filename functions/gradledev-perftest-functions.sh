@@ -235,11 +235,6 @@ function gradledev_perfbuild_printMinTime {
     )
 }
 
-function gradledev_installed_version {
-    gradledev_find_install
-    $GRADLEDEV_INSTALL_DIR/bin/gradle -v |egrep '^Gradle'|awk '{ print $2 }'
-}
-
 function gradledev_rename_caches {
     GRADLE_VER=`gradledev_installed_version 2> /dev/null`
     GRADLE_CACHE_DIR=`ls -trd1 .gradle/3.* 2> /dev/null`
