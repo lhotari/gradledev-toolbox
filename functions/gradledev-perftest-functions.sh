@@ -504,3 +504,14 @@ function gradledev_yjp_stop_profiling {
     $yjp_cli stop-alloc-recording
     $yjp_cli stop-monitor-profiling
 }
+
+function gradledev_jfr_start_idea {
+    local IDEA_PID=`jps -l|grep com.intellij.idea.Main|awk '{ print $1 }'`
+    [ -n "$IDEA_PID" ] && gradledev_jfr_start $IDEA_PID IDEA
+}
+
+function gradledev_jfr_stop_idea {
+    local IDEA_PID=`jps -l|grep com.intellij.idea.Main|awk '{ print $1 }'`
+    [ -n "$IDEA_PID" ] && gradledev_jfr_stop $IDEA_PID IDEA
+}
+
