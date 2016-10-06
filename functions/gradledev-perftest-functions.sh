@@ -515,3 +515,19 @@ function gradledev_jfr_stop_idea {
     [ -n "$IDEA_PID" ] && gradledev_jfr_stop $IDEA_PID IDEA
 }
 
+function gradledev_jfr_start_idea_tapi {
+    gradledev_jfr_start_idea
+    while [ 1 ]; do
+        echo "."
+        if [ -f gradle.pid ]; then
+            gradledev_jfr_start
+            break
+        fi
+        sleep 1
+    done
+}
+
+function gradledev_jfr_stop_idea_tapi {
+    gradledev_jfr_stop_idea
+    gradledev_jfr_stop
+}
