@@ -433,14 +433,28 @@ function gradledev_profiling_target_pid {
 }
 
 function gradledev_jfr_start {
-    DAEMON_PID=`gradledev_profiling_target_pid`
-    jcmd $DAEMON_PID JFR.start name=GradleDaemon_$DAEMON_PID settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
+    local RECORDING_NAME="GradleDaemon"
+    local DAEMON_PID
+    if [ $# -eq 0 ]; then
+      DAEMON_PID=`gradledev_profiling_target_pid`
+    else
+      DAEMON_PID=$1
+      [ $# -lt 2 ] || RECORDING_NAME=$2
+    fi    
+    jcmd $DAEMON_PID JFR.start name=${RECORDING_NAME}_${DAEMON_PID} settings=$GRADLEDEV_TOOLBOX_DIR/etc/jfr/profiling.jfc maxsize=1G
 }
 
 function gradledev_jfr_stop {
-    DAEMON_PID=`gradledev_profiling_target_pid`
-    FILENAME="$PWD/GradleDaemon_${DAEMON_PID}_$(date +%F-%T).jfr"
-    jcmd $DAEMON_PID JFR.stop name=GradleDaemon_$DAEMON_PID filename=$FILENAME
+    local RECORDING_NAME="GradleDaemon"
+    local DAEMON_PID
+    if [ $# -eq 0 ]; then
+      DAEMON_PID=`gradledev_profiling_target_pid`
+    else
+      DAEMON_PID=$1
+      [ $# -lt 2 ] || RECORDING_NAME=$2
+    fi
+    FILENAME="$PWD/${RECORDING_NAME}_${DAEMON_PID}_$(date +%F-%T).jfr"
+    jcmd $DAEMON_PID JFR.stop name=${RECORDING_NAME}_${DAEMON_PID} filename=$FILENAME
     if [[ "$1" == "open" ]]; then
         jmc -open "$FILENAME" &
     else
