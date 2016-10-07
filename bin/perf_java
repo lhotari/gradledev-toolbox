@@ -1,0 +1,28 @@
+#!/bin/bash
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+GRADLEDEV_TOOLBOX_DIR=$(dirname "$DIR")
+FLAMEGRAPH_HOME=$GRADLEDEV_TOOLBOX_DIR/FlameGraph
+
+if [ $(id -u) -ne 0 ]; then
+    sudo -E $0 "$@"
+    exit
+fi
+
+duration=1800
+while getopts "d:" opt; do
+    case "${opt}" in
+        d)
+        duration=$OPTARG
+        ;;
+    esac
+done
+shift $((OPTIND-1))
+
+echo "Profiling for $duration seconds... Use CTRL-C to stop earlier."
+trap '' 2 && perf record -F 99 -a -g -- bash -c "for i in {1..$duration}; do echo -n .; sleep 1; done"
+echo
+$DIR/jmaps
+filename=perf_java_`date +%F-%T | sed s/:/-/g`.stacks
+perf script > $filename
+$FLAMEGRAPH_HOME/stackcollapse-perf.pl $filename | $FLAMEGRAPH_HOME/flamegraph.pl --color=java --hash > $filename.svg
+echo "Result in $PWD/$filename.svg"
