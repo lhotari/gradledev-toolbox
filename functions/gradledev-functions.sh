@@ -11,6 +11,9 @@ if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
     GRADLEDEV_TOOLBOX_DIR=$(dirname $GRADLEDEV_TOOLBOX_DIR)
 fi
 
+# add bin directory to path
+export PATH="$GRADLEDEV_TOOLBOX_DIR/bin:$PATH"
+
 function gradledev_changed_modules {
     (
     local i
