@@ -203,14 +203,20 @@ function gradledev_installed_version {
 
 function gradledev_install_wrapper {
     (
-    [ -z "$ZSH_VERSION" ] || unsetopt nomatch
+    [ -z "$ZSH_VERSION" ] || { unsetopt nomatch; setopt extendedglob; }
     gradledev_install
     gradledev_find_install_dir
     $GRADLEDEV_INSTALL_DIR/bin/gradle wrapper
     GRADLE_VER=`gradledev_installed_version 2> /dev/null`
     if [[ -n "$GRADLE_VER" ]]; then
-        cp -Rdvp $GRADLEDEV_INSTALL_DIR/. `ls -d1 ~/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*`/gradle-${GRADLE_VER}
-        touch `ls -d1 ~/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*`/gradle-${GRADLE_VER}-bin.zip.ok
+        local GRADLE_DIR="$HOME/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*"
+        if [ -z "$ZSH_VERSION" ]; then
+            GRADLE_DIR=`echo ${GRADLE_DIR}`
+        else
+            GRADLE_DIR=`echo ${~GRADLE_DIR}`
+        fi
+        cp -Rdvp $GRADLEDEV_INSTALL_DIR/. ${GRADLE_DIR}/gradle-${GRADLE_VER}
+        touch ${GRADLE_DIR}/gradle-${GRADLE_VER}-bin.zip.ok
     fi
     ./gradlew --version
     )
