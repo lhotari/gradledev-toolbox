@@ -205,10 +205,12 @@ function gradledev_install_wrapper {
     (
     gradledev_install
     gradledev_find_install_dir
+    echo ' ' > empty_build.gradle
+    echo ' ' > empty_settings.gradle
     for (( i=0; i<2; i++ )) do
         (
         [ -z "$ZSH_VERSION" ] || { unsetopt nomatch; setopt extendedglob; }
-        $GRADLEDEV_INSTALL_DIR/bin/gradle wrapper
+        $GRADLEDEV_INSTALL_DIR/bin/gradle -b empty_build.gradle -c empty_settings.gradle wrapper
         GRADLE_VER=`gradledev_installed_version 2> /dev/null`
         if [[ -n "$GRADLE_VER" ]]; then
             local GRADLE_DIR="$HOME/.gradle/wrapper/dists/gradle-${GRADLE_VER}-bin/*"
@@ -222,6 +224,7 @@ function gradledev_install_wrapper {
         fi
         )
     done
+    rm empty_build.gradle empty_settings.gradle
     ./gradlew --version
     )
 }
