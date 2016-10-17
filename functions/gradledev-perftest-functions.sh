@@ -134,7 +134,7 @@ function gradledev_benchmark {
         echo "Warmup $i/$warmupcount"
         gradledev_perfbuild_run "${params[@]}"
     done
-    if [ $warmupcount -eq 0 ]; then
+    if [[ $warmupcount -eq 0 && ( $jfrenabled -eq 1 || $hpenabled -eq 1 || $yjpenabled -eq 1 ) ]]; then
         gradledev_perfbuild_run help
     fi
     TIMESLOG="times$(gradledev_timestamp).log"
