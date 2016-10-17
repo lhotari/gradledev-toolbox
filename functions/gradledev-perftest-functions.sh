@@ -265,8 +265,8 @@ function gradledev_daemon_kill {
 function gradledev_set_opts {
     local mode=$1
     shift
-    local mem_options=${GRADLEDEV_OPTS:--Xmx2g}
-    local options="$mem_options $@"
+    local default_options=${GRADLEDEV_OPTS:--Xmx2g -Xverify:none}
+    local options="${default_options} $@"
     if [ $mode = "nodaemon" ]; then
         export GRADLE_OPTS="$options"
     elif [ $mode = "both" ]; then
