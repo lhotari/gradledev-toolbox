@@ -285,7 +285,7 @@ function gradle_opts_default {
 function gradle_opts_jfr {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode 'XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=stackdepth=1024 -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
+    gradledev_set_opts $mode '-XX:+UnlockCommercialFeatures -XX:+FlightRecorder -XX:FlightRecorderOptions=stackdepth=1024 -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints'
 }
 
 function gradle_opts_yjp {
@@ -347,7 +347,7 @@ function gradle_opts_jfr_enabled {
 function gradle_opts_jitwatch {
     local mode=daemon
     [ $# -lt 1 ] || mode=$1
-    gradledev_set_opts $mode 'XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'
+    gradledev_set_opts $mode '-XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation -XX:+TraceClassLoading -XX:+LogVMOutput -XX:-DisplayVMOutput'
 }
 
 function gradle_opts_gclogging {
