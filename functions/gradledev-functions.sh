@@ -3,7 +3,7 @@
 
 if [ -z "$GRADLEDEV_TOOLBOX_DIR" ]; then
     if [ -n "$BASH_SOURCE" ];then
-        GRADLEDEV_TOOLBOX_DIR=$(dirname $BASH_SOURCE)	
+        GRADLEDEV_TOOLBOX_DIR=$(dirname $BASH_SOURCE)
     else
         # zsh
         GRADLEDEV_TOOLBOX_DIR=${0:a:h}
@@ -22,7 +22,7 @@ function gradledev_changed_modules {
         UPSTREAM=$(git show-upstream 2> /dev/null)
     fi
     UPSTREAM="${UPSTREAM:-origin/master}"
-    for i in `git changed-files $UPSTREAM | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do 
+    for i in `git changed-files $UPSTREAM | grep subprojects | awk -F / '{ print $2 }' | sort | uniq `; do
         python -c "import sys,re; uncapitalize = lambda s: s[:1].lower() + s[1:] if s else ''; print uncapitalize(re.sub(r'(\w+)-?', lambda m:m.group(1).capitalize(), sys.argv[1]))" $i
     done
     )
@@ -31,7 +31,7 @@ function gradledev_changed_modules {
 function gradledev_changed_check_targets {
     (
     local i
-    for i in `gradledev_changed_modules "$1" |grep -v docs`; do 
+    for i in `gradledev_changed_modules "$1" |grep -v docs`; do
         echo -n ":${i}:check "
         if [[ "$2" == "noit" ]]; then
             echo -n "-x :${i}:integTest "
@@ -171,7 +171,7 @@ function gradledev_cd_gradle_dir {
 
 function gradledev_find_install {
     gradledev_find_install_dir
-    [ -d $GRADLEDEV_INSTALL_DIR ] || gradledev_install    
+    [ -d $GRADLEDEV_INSTALL_DIR ] || gradledev_install
 }
 
 function gradledev_find_install_dir {
@@ -252,8 +252,11 @@ function gradledev_jstacks_workers {
     javadev_gather_jstacks `jps -l |grep GradleWorkerMain|awk '{ print $1 }'`
 }
 
-function idea {
-    local params="$@"
-    [ $# -gt 0 ] || params="$PWD"
-    /opt/idea-IC/bin/idea.sh $params &
+function gitpush_to_forked {
+  (
+  CURRENTBRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name HEAD)
+  if [ -n "$CURRENTBRANCH" ]; then
+    git push -f forked "$CURRENTBRANCH:$CURRENTBRANCH"
+  fi
+  )
 }
